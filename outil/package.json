@@ -1,0 +1,20 @@
+{
+  "name": "sehoria",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fontsource-variable/caveat": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource/gochi-hand": "^5.3.0",
+    "@fontsource/kalam": "^5.3.0",
+    "roughjs": "^4.6.6"
+  }
+}

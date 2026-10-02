@@ -1,0 +1,7 @@
+node_modules/
+build/
+livraison/
+assets/photos/
+assets/decoupes/
+assets/essai/
+__pycache__/
