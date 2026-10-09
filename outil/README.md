@@ -13,9 +13,10 @@ python3 src/textures.py                       # seulement si assets/*.png manque
 Le logo est dans `assets/logo-sehoria.png`. Les photos de la semaine (Unsplash, téléchargées par Togi) vont dans `assets/photos/U*.jpg`, puis `python3 src/preparer_photos.py` (filtre §5 + détourage) et `src/decoupes.py`.
 
 ## Fabriquer une semaine
-1. Copier `src/semaine01.py` → `src/semaineNN.py` (textes, photos, légendes : seule source du texte) et `src/mep_s01.py` → `src/mep_sNN.py` (une fonction par page).
-2. Adapter les imports dans `src/semaine.py` (SEMAINE, PUBLICATIONS, PUBLICATIONS_MEP, SLUGS).
-3. `python3 src/essai.py` (planche d'essai), puis `python3 src/semaine.py` → `livraison/SNN/` : PNG par page, PDF exact 810 × 1012,5 pt, légendes contrôlées.
+1. Copier `src/semaine02.py` → `src/semaineNN.py` (textes, photos, légendes Instagram / Facebook / LinkedIn, SLUGS : seule source du texte) et `src/mep_s02.py` → `src/mep_sNN.py` (une fonction par page).
+2. Photos : un script `src/preparer_sNN.py` par semaine (retouches §5, redressement, détourage ; modèle : `preparer_s02.py`).
+3. `python3 src/semaine.py NN [S0N-A1 …]` → `livraison/SNN/` : PNG par page, PDF exact 810 × 1012,5 pt, légendes contrôlées.
+   Dessins disponibles (`gabarit/dessins.js`) : en plus de ceux de S01, `lunettes`, `soleil`, `nuage` (option `pluie`), `visage` (dessiné, option `flou`), `telephone`, `bulleVide`.
 4. Contrôles automatiques : ≤ 30 mots par page, rien sous 28 px, zone de sécurité, chevauchements, polices chargées, texte du PDF = texte de la page, interdits du §6 (`src/controle.py`).
 
 ## Programmer (Metricool)

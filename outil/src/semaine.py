@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 """Rendu final de la semaine : une publication = un dossier (PNG par page + PDF), contrôles, légendes."""
+import importlib
 import json
 import shutil
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from mep_s01 import PUBLICATIONS_MEP
-from semaine01 import PUBLICATIONS, SEMAINE
 from rendu import rendre, resume, RACINE
 from controle import verifier, normaliser
 
-SLUGS = {"S01-A1": "votre-premier-challenge", "S01-A2": "tableau-a-batons", "S01-B1": "rivet-par-rivet"}
+# usage : python3 src/semaine.py NN [S0N-A1 …]   (NN = numéro de semaine ; par défaut la dernière)
+_args = sys.argv[1:]
+_num = _args.pop(0) if _args and _args[0].isdigit() else "02"
+_txt = importlib.import_module(f"semaine{_num}")
+PUBLICATIONS, SEMAINE = _txt.PUBLICATIONS, _txt.SEMAINE
+PUBLICATIONS_MEP = importlib.import_module(f"mep_s{_num}").PUBLICATIONS_MEP
+SLUGS = getattr(_txt, "SLUGS", {"S01-A1": "votre-premier-challenge", "S01-A2": "tableau-a-batons", "S01-B1": "rivet-par-rivet"})
 LIVRAISON = RACINE / "livraison" / f"S{SEMAINE}"
 
 def legende_propre(t: str) -> str:
@@ -44,7 +49,7 @@ def principal(seulement=None):
     lignes = [f"SEHORIA — SEMAINE {SEMAINE} — LÉGENDES", "=" * 40, ""]
     for pub in PUBLICATIONS:
         lignes += [f"{pub['id']} — {pub['titre']}", "-" * 40]
-        for reseau in ("instagram", "linkedin"):
+        for reseau in [r for r in ("instagram", "facebook", "linkedin") if r in pub["legendes"]]:
             leg = legende_propre(pub["legendes"][reseau])
             constats, _, _ = verifier(leg, "legende")
             erreurs = [c for c in constats if c[0] == "ERREUR"]
@@ -53,6 +58,8 @@ def principal(seulement=None):
                 assert "Demander un accès" not in leg and "À partager avec votre équipe" in leg, pub["id"]
             else:
                 assert ("lien en bio" in leg) if reseau == "instagram" else ("sehoria.fr" in leg), (pub["id"], reseau)
+                if reseau != "instagram":
+                    assert "#" not in leg and "Premier mois offert" in leg, (pub["id"], reseau)
             lignes += [f"[{reseau.upper()}]", leg, ""]
         lignes.append("")
     (LIVRAISON / f"S{SEMAINE}_legendes.txt").write_text("\n".join(lignes), encoding="utf-8")
@@ -60,4 +67,4 @@ def principal(seulement=None):
     return bilans
 
 if __name__ == "__main__":
-    principal(sys.argv[1:] or None)
+    principal(_args or None)

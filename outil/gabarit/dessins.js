@@ -388,7 +388,138 @@
     svg.appendChild(g);
   }
 
-  const PRIMITIVES = { fleche, gribouillis, ellipse, bulle, batons, tableau, icone, ecriture, infini, feutre, presse, etui, coche, manque, croix, montee };
+  /* ================= semaine 02 ================= */
+
+  /* flou (visage vu sans ses lunettes) : filtre SVG partagé par la page */
+  function filtreFlou(page, ecart) {
+    const racine = page.querySelector("svg.dessins");
+    const id = "flou-" + page.id + "-" + String(ecart).replace(".", "_");
+    if (!racine.querySelector("#" + id)) {
+      let defs = racine.querySelector("defs");
+      if (!defs) { defs = document.createElementNS(NS, "defs"); racine.insertBefore(defs, racine.firstChild); }
+      const f = document.createElementNS(NS, "filter");
+      f.setAttribute("id", id); f.setAttribute("x", "-30%"); f.setAttribute("y", "-30%"); f.setAttribute("width", "160%"); f.setAttribute("height", "160%");
+      const b = document.createElementNS(NS, "feGaussianBlur"); b.setAttribute("stdDeviation", ecart);
+      f.appendChild(b); defs.appendChild(f);
+    }
+    return `url(#${id})`;
+  }
+
+  /* une paire de lunettes dessinée (cx, cy = milieu du pont ; r = rayon d'un verre) */
+  function lunettes(rc, svg, o, page) {
+    const g = document.createElementNS(NS, "g");
+    const opt = { stroke: couleur(page, o.c || "encre"), strokeWidth: o.ep || 5, roughness: o.rugosite || 1.0, bowing: 1, seed: o.graine || 401 };
+    lunettesTrait(rc, g, o.cx, o.cy, o.r, opt, !!o.pleines);
+    if (o.rot) g.setAttribute("transform", `rotate(${o.rot} ${o.cx} ${o.cy})`);
+    svg.appendChild(g);
+  }
+
+  /* soleil : disque, rayons, hachures légères à l'intérieur */
+  function soleil(rc, svg, o, page) {
+    const g = document.createElementNS(NS, "g"), { cx, cy, r } = o, n = o.rayons || 10;
+    const c = couleur(page, o.c || "accent");
+    const opt = { stroke: c, strokeWidth: o.ep || 6, roughness: 1.1, bowing: 1, seed: o.graine || 501 };
+    g.appendChild(rc.circle(cx, cy, 2 * r, { ...opt, fill: couleur(page, o.remplir || o.c || "accent"), fillStyle: "hachure",
+      hachureGap: o.trame || 9, fillWeight: 2.5, hachureAngle: -40 }));
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + (o.decalage || 0);
+      const r1 = r * 1.28, r2 = r * (i % 2 ? 1.62 : 1.78);
+      g.appendChild(rc.line(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1, cx + Math.cos(a) * r2, cy + Math.sin(a) * r2,
+        { ...opt, seed: opt.seed + 3 + i }));
+    }
+    svg.appendChild(g);
+  }
+
+  /* nuage : contour d'un groupe de bosses, fond plein ; option pluie (gouttes en dessous) */
+  function nuage(rc, svg, o, page) {
+    const g = document.createElementNS(NS, "g");
+    const { cx, cy, w } = o, h = o.h || w * 0.56, x0 = cx - w / 2, yb = cy + h / 2;
+    const bosses = [[0.17, 0.30], [0.40, 0.50], [0.66, 0.42], [0.86, 0.26]].map(([fx, fr]) => [x0 + w * fx, yb - h * fr * 1.0, h * fr]);
+    const pts = [];
+    for (let i = 0; i <= 60; i++) {
+      const x = x0 + (w * i) / 60;
+      let y = yb;
+      bosses.forEach(([bx, by, br]) => { const d = x - bx; if (Math.abs(d) <= br) y = Math.min(y, by - Math.sqrt(br * br - d * d) * 0.95); });
+      pts.push([x, y]);
+    }
+    pts.push([x0 + w, yb], [x0, yb]);
+    const c = couleur(page, o.c || "encre");
+    const opt = { stroke: c, strokeWidth: o.ep || 6, roughness: 1.0, bowing: 0.8, seed: o.graine || 601,
+      fill: couleur(page, o.remplir || "#FFFCF7"), fillStyle: "solid" };
+    if (o.gris) { opt.fill = "#D8D4E2"; }
+    g.appendChild(rc.polygon(pts, opt));
+    if (o.pluie) {
+      const cp = couleur(page, o.cpluie || "accent"), n = o.pluie;
+      for (let i = 0; i < n; i++) {
+        const x = x0 + w * (0.18 + (0.64 * i) / Math.max(1, n - 1)), y = yb + h * (0.22 + 0.18 * (i % 2));
+        g.appendChild(rc.line(x, y, x - h * 0.14, y + h * 0.36, { stroke: cp, strokeWidth: (o.ep || 6) * 1.05, roughness: 0.9, seed: opt.seed + 10 + i }));
+      }
+    }
+    if (o.rot) g.setAttribute("transform", `rotate(${o.rot} ${cx} ${cy})`);
+    svg.appendChild(g);
+  }
+
+  /* visage dessiné (jamais une vraie personne) : tête, cheveux, lunettes, sourire ; option flou */
+  function visage(rc, svg, o, page) {
+    const g = document.createElementNS(NS, "g"), { cx, cy, r } = o;
+    const c = couleur(page, o.c || "encre");
+    const opt = { stroke: c, strokeWidth: o.ep || 5, roughness: 1.0, bowing: 1, seed: o.graine || 701 };
+    g.appendChild(rc.circle(cx, cy, 2 * r, { ...opt, fill: "#FFFCF7", fillStyle: "solid" }));
+    // cheveux : une mèche en arc sur le haut de la tête
+    g.appendChild(rc.curve([[cx - r * 0.92, cy - r * 0.18], [cx - r * 0.55, cy - r * 0.78], [cx + r * 0.05, cy - r * 0.62],
+      [cx + r * 0.55, cy - r * 0.86], [cx + r * 0.94, cy - r * 0.2]], { ...opt, seed: opt.seed + 1 }));
+    if (o.lunettes) {
+      lunettesTrait(rc, g, cx, cy - r * 0.08, r * 0.27, { ...opt, stroke: couleur(page, o.clunettes || o.c || "encre"), seed: opt.seed + 2 }, false);
+    } else {
+      [-1, 1].forEach((s, i) => g.appendChild(rc.circle(cx + s * r * 0.36, cy - r * 0.08, r * 0.12, { ...opt, fill: c, fillStyle: "solid", seed: opt.seed + 3 + i })));
+    }
+    if (o.sourire !== false) {
+      g.appendChild(rc.curve([[cx - r * 0.34, cy + r * 0.36], [cx, cy + r * 0.56], [cx + r * 0.34, cy + r * 0.36]], { ...opt, seed: opt.seed + 6 }));
+    } else {
+      g.appendChild(rc.line(cx - r * 0.26, cy + r * 0.46, cx + r * 0.26, cy + r * 0.46, { ...opt, seed: opt.seed + 6 }));
+    }
+    if (o.flou) g.setAttribute("filter", filtreFlou(page, o.flou));
+    if (o.rot) g.setAttribute("transform", `rotate(${o.rot} ${cx} ${cy})`);
+    svg.appendChild(g);
+  }
+
+  /* téléphone dessiné (un objet, pas une capture d'écran) */
+  function telephone(rc, svg, o, page) {
+    const g = document.createElementNS(NS, "g"), { x, y, w, h } = o, r = w * 0.14;
+    const c = couleur(page, o.c || "encre");
+    const opt = { stroke: c, strokeWidth: o.ep || 6, roughness: 0.8, bowing: 0.6, seed: o.graine || 801 };
+    const d = `M ${x + r} ${y} L ${x + w - r} ${y} Q ${x + w} ${y} ${x + w} ${y + r} L ${x + w} ${y + h - r} Q ${x + w} ${y + h} ${x + w - r} ${y + h}
+               L ${x + r} ${y + h} Q ${x} ${y + h} ${x} ${y + h - r} L ${x} ${y + r} Q ${x} ${y} ${x + r} ${y} Z`;
+    g.appendChild(rc.path(d, { ...opt, fill: couleur(page, o.remplir || "encre"), fillStyle: "solid" }));
+    const m = w * 0.07;
+    g.appendChild(rc.rectangle(x + m, y + m * 1.9, w - 2 * m, h - m * 3.8, { ...opt, strokeWidth: 3, fill: "#FFFCF7", fillStyle: "solid", seed: opt.seed + 1 }));
+    g.appendChild(rc.line(x + w * 0.4, y + m * 0.95, x + w * 0.6, y + m * 0.95, { ...opt, stroke: "#FFFCF7", strokeWidth: 4, seed: opt.seed + 2 }));
+    if (o.rot) g.setAttribute("transform", `rotate(${o.rot} ${x + w / 2} ${y + h / 2})`);
+    svg.appendChild(g);
+  }
+
+  /* bulle de parole vide (ellipse + queue) posée à un endroit donné */
+  function bulleVide(rc, svg, o, page) {
+    const { cx, cy, w, h } = o, g = document.createElementNS(NS, "g");
+    const opt = { stroke: couleur(page, o.c || "accent"), strokeWidth: o.ep || 5, roughness: 1.3, bowing: 1, seed: o.graine || 901 };
+    if (o.remplir) { opt.fill = couleur(page, o.remplir); opt.fillStyle = "solid"; }
+    g.appendChild(rc.ellipse(cx, cy, w, h, opt));
+    if (o.queue) {
+      const [tx, ty] = o.queue, ang = Math.atan2(ty - cy, tx - cx);
+      const bx = cx + (w / 2) * Math.cos(ang) * 0.92, by = cy + (h / 2) * Math.sin(ang) * 0.92;
+      const perp = ang + Math.PI / 2, e = 14;
+      g.appendChild(rc.linearPath([[bx + e * Math.cos(perp), by + e * Math.sin(perp)], [tx, ty],
+        [bx - e * Math.cos(perp), by - e * Math.sin(perp)]], { ...opt, fill: undefined, seed: opt.seed + 1 }));
+    }
+    if (o.points) {  // « … » dessinés : trois points
+      [-1, 0, 1].forEach((k, i) => g.appendChild(rc.circle(cx + k * w * 0.16, cy, Math.max(8, w * 0.05),
+        { ...opt, fill: couleur(page, o.c || "accent"), fillStyle: "solid", seed: opt.seed + 5 + i })));
+    }
+    svg.appendChild(g);
+  }
+
+  const PRIMITIVES = { fleche, gribouillis, ellipse, bulle, batons, tableau, icone, ecriture, infini, feutre, presse, etui, coche, manque, croix, montee,
+                       lunettes, soleil, nuage, visage, telephone, bulleVide };
 
   async function dessiner() {
     await document.fonts.ready;

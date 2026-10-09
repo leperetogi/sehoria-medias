@@ -82,7 +82,7 @@ def verifier(texte: str, contexte: str = "A"):
         for niveau, motif, msg in REGLES_PHRASE_B:
             for m in re.finditer(motif, low):
                 constats.append((niveau, msg, m.group(0)))
-    if "lancez vos challenges" in low and "lancez vos challenges. l'app compte les ventes." not in low:
+    if "lancez vos challenges" in low and "lancez vos challenges. l'app compte les ventes." not in re.sub(r"\s+", " ", low):
         constats.append(("ERREUR", "l'accroche de marque ne se reformule pas (§4)", "Lancez vos challenges…"))
     # Relevés à relire : nombres et noms propres
     nombres = sorted(set(re.findall(r"\d+(?:[.,/]\d+)?", t)))
