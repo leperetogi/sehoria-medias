@@ -10,7 +10,17 @@ npm install                                   # polices (Fraunces, JetBrains Mon
 pip install rembg brotli pypdf pypdfium2 --break-system-packages   # playwright, numpy, pillow, opencv : déjà présents en général
 python3 src/textures.py                       # seulement si assets/*.png manquent (papiers générés, aucune image tierce)
 ```
-Le logo est dans `assets/logo-sehoria.png`. Les photos de la semaine (Unsplash, téléchargées par Togi) vont dans `assets/photos/U*.jpg`, puis `python3 src/preparer_photos.py` (filtre §5 + détourage) et `src/decoupes.py`.
+Le logo est dans `assets/logo-sehoria.png`. Les photos de la semaine vont dans `assets/photos/U*.jpg`, puis `python3 src/preparer_photos.py` (filtre §5 + détourage) et `src/decoupes.py`.
+
+## Photos : téléchargement par GitHub (depuis le 11/10)
+L'espace de travail ne joint pas Unsplash ; GitHub, si. Une fois les photos validées par Togi :
+```
+python3 src/photos.py 02 "U12-penseur=<urls.raw du connecteur Unsplash>" "U13-gravure=<lien upload.wikimedia.org>"
+```
+Le script pousse la liste sur la branche `photos`, attend le robot GitHub (moins d'une minute en général) et copie
+les photos réussies dans `assets/photos/`. Un échec s'affiche avec sa raison. Pour Unsplash, toujours le lien
+`images.unsplash.com/photo-…` (champ `urls.raw`) : un identifiant seul échoue (401). Chercher avec `plus: none`
+(jamais de photo Unsplash+). Détail : README de la branche `photos`.
 
 ## Fabriquer une semaine
 1. Copier `src/semaine02.py` → `src/semaineNN.py` (textes, photos, légendes Instagram / Facebook / LinkedIn, SLUGS : seule source du texte) et `src/mep_s02.py` → `src/mep_sNN.py` (une fonction par page).
