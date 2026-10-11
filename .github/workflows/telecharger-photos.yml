@@ -1,0 +1,46 @@
+name: Télécharger les photos
+
+# Se lance quand une liste de photos est déposée dans demandes/ sur la branche « photos ».
+on:
+  push:
+    branches: [photos]
+    paths: ["demandes/*.txt"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: telecharger-photos
+  cancel-in-progress: false
+
+jobs:
+  telecharger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: photos
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Télécharger
+        run: |
+          pip install --quiet pillow
+          python .github/telecharger.py
+
+      - name: Enregistrer sur la branche
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add -A -- 'S[0-9][0-9]'
+          if git diff --cached --quiet; then echo "Rien de nouveau."; exit 0; fi
+          git commit -m "Photos téléchargées"
+          for essai in 1 2 3; do
+            git pull --rebase --quiet origin photos && git push origin HEAD:photos && exit 0
+            sleep 5
+          done
+          exit 1
