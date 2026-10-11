@@ -33,6 +33,7 @@ REGLES_GENERALES = [
     ("ERREUR", r"\bmarges?\b", "aucune promesse sur la marge (§6)"),
     ("ERREUR", r"ind[ée]pendants?", "aucune restriction aux « indépendants » (§6)"),
     ("ERREUR", r"\bHT\b", "jamais « HT » (§6)"),
+    ("ERREUR", r"comptoir", "en optique on vend à la « table de vente », jamais au « comptoir » (§6, règle de Togi)"),
     ("ERREUR", r"plus choisi", "aucun badge « le plus choisi » (§6)"),
     ("ERREUR", r"2\s?000\s+opticiens", "formule interdite (§6)"),
     ("ERREUR", r"t[ée]moign", "aucun témoignage (§6)"),
