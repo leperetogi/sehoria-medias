@@ -4,7 +4,9 @@ L'espace de travail de Claude ne peut pas joindre Unsplash, Pexels ni Wikimedia.
 Cette branche sert de relais : Claude y dépose la liste des photos retenues, GitHub les télécharge, Claude les récupère.
 
 1. `demandes/SNN.txt` : une photo par ligne, `nom source` (voir `.github/telecharger.py`).
-   La source est un identifiant Unsplash (11 caractères), un lien `unsplash.com/photos/…`, un lien Pexels ou un lien `upload.wikimedia.org`.
+   Source à donner pour Unsplash : le lien `images.unsplash.com/photo-…` (champ `urls.raw` du connecteur Unsplash).
+   Un simple identifiant ou un lien `unsplash.com/photos/…` échoue : Unsplash répond 401 aux robots sur ces adresses.
+   Autres sources : lien Pexels, lien `upload.wikimedia.org` (de préférence une vignette `…/thumb/…/1280px-…`).
 2. Le dépôt de la liste lance le robot (`.github/workflows/telecharger-photos.yml`) : chaque photo arrive en `SNN/<nom>.jpg`
    (2400 px de large au plus), et `SNN/_rapport.md` dit ce qui a marché ou échoué.
 3. Côté Claude : `python3 src/photos.py NN nom=source …` dans `outil/` fait les trois étapes d'un coup (branche `main`).
