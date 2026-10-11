@@ -7,6 +7,7 @@ Pexels et Wikimedia ; l'espace de travail de Claude, non).
 Format d'une demande, une photo par ligne :
     U12-tour-eiffel  w7riMytN6Wk
     U13-penseur      https://unsplash.com/photos/le-penseur-gYYy_b3DFK4
+    U16-penseur      https://images.unsplash.com/photo-1763936783251-4a3eb135f07f?ixid=…   (urls.raw du connecteur : le plus sûr)
     U14-gravure      https://upload.wikimedia.org/wikipedia/commons/a/ab/Fichier.jpg
     U15-montures     https://www.pexels.com/photo/lunettes-123456/
 Les lignes vides et celles qui commencent par # sont ignorées.
@@ -14,6 +15,7 @@ Une photo déjà téléchargée n'est jamais retéléchargée.
 Résultat de chaque ligne : SNN/_rapport.md.
 """
 import io
+import json
 import re
 import sys
 import time
@@ -38,7 +40,7 @@ HOTES = {"unsplash.com", "www.unsplash.com", "images.unsplash.com", "upload.wiki
 def url_source(source: str) -> str:
     """Transforme ce qui a été demandé en adresse de téléchargement."""
     if ID_UNSPLASH.match(source):
-        return f"https://unsplash.com/photos/{source}/download?force=true&w={LARGEUR}"
+        return adresse_unsplash(source)
     m = re.match(r"^https://([^/]+)(/[^?#]*)?", source)
     if not m or m.group(1).lower() not in HOTES:
         raise ValueError("source non reconnue (ID Unsplash, ou lien Unsplash, Pexels, upload.wikimedia.org)")
@@ -50,14 +52,37 @@ def url_source(source: str) -> str:
         ident = chemin.split("/")[2][-11:]   # l'identifiant est toujours les 11 derniers caractères
         if not ID_UNSPLASH.match(ident):
             raise ValueError("identifiant Unsplash introuvable dans le lien")
-        return f"https://unsplash.com/photos/{ident}/download?force=true&w={LARGEUR}"
+        return adresse_unsplash(ident)
     if hote.endswith("pexels.com") and hote != "images.pexels.com":
         m2 = re.search(r"(\d+)$", chemin)
         if not m2:
             raise ValueError("numéro de photo Pexels introuvable dans le lien")
         n = m2.group(1)
         return f"https://images.pexels.com/photos/{n}/pexels-photo-{n}.jpeg?auto=compress&cs=tinysrgb&w={LARGEUR}"
+    if hote == "images.unsplash.com":
+        return taille_unsplash(source)
     return source
+
+
+def taille_unsplash(url: str) -> str:
+    """Lien images.unsplash.com (urls.raw du connecteur) : on demande 2400 px en JPEG."""
+    url = re.sub(r"[?&](w|q|fm)=[^&]*", "", url)
+    if "?" not in url and "&" in url:
+        url = url.replace("&", "?", 1)
+    return url + ("&" if "?" in url else "?") + f"w={LARGEUR}&q=90&fm=jpg"
+
+
+def adresse_unsplash(ident: str) -> str:
+    """Identifiant Unsplash → adresse de l'image (le bouton « Télécharger » refuse les robots : 401)."""
+    req = urllib.request.Request(f"https://unsplash.com/napi/photos/{ident}", headers={"User-Agent": UA})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            infos = json.load(r)
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(f"HTTP {e.code} sur la fiche de la photo : donner plutôt son lien images.unsplash.com (urls.raw)")
+    if infos.get("premium") or infos.get("plus"):
+        raise ValueError("photo Unsplash+ (payante) : à écarter")
+    return taille_unsplash(infos["urls"]["raw"])
 
 
 def telecharger(url: str) -> bytes:
