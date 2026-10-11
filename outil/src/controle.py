@@ -38,14 +38,16 @@ REGLES_GENERALES = [
     ("ERREUR", r"t[ée]moign", "aucun témoignage (§6)"),
     ("ERREUR", r"prix r[ée]seau|conditions? n[ée]goci", "aucun prix réseau ni condition négociée (§6)"),
     ("ERREUR", r"€|\beuros?\b", "montant : grille publique seulement, si le sujet l'exige (§6)"),
-    ("ERREUR", r"\bmeilleur(e|s|es)?\b|n°\s?1\b|num[ée]ro un|\bleader\b|r[ée]volutionnaire|incontournable|\bn[o°]\s?1\b",
-     "superlatif invérifiable (§6)"),
-    ("ALERTE", r"\b(le|la|les) plus\b", "superlatif possible : à relire (§6)"),
     ("ALERTE", r"\bclassement\b", "l'écran Classement ne se montre pas : vérifier le contexte (§5)"),
     ("ALERTE", r"\b(1\d{3}|20[01]\d|202[0-6])\b", "année : aucune date antérieure au 8 août 2026 (§6)"),
     ("ALERTE", r"\b\d{1,2}\s+(janvier|f[ée]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[ée]cembre)\b",
      "date : vérifier (§6)"),
 ]
+
+# Superlatifs (§6, assoupli le 11/10) : permis dans le contenu métier, jamais pour qualifier Sehoria sans preuve.
+SUPERLATIF = re.compile(r"\bmeilleur(e|s|es)?\b|n°\s?1\b|\bn[o°]\s?1\b|num[ée]ro un|\bleader\b|r[ée]volutionnaire"
+                        r"|incontournable|\b(le|la|les) plus\b|\b(le|la|les) moins\b")
+SUJET_SEHORIA = re.compile(r"sehoria|\bl'app\b|\bl'application\b|\bnotre (app|application|outil|solution)\b")
 
 VOUVOIEMENT = ("ERREUR", r"\btu\b|\bt'[a-zéèêàâîôûh]|\bton\b|\btes\b|\btoi\b|\bta\b", "tutoiement : les opticiens sont vouvoyés")
 
@@ -75,6 +77,12 @@ def verifier(texte: str, contexte: str = "A"):
     for e in ENSEIGNES:
         if re.search(r"(?<![a-zà-ÿ])" + re.escape(e) + r"(?![a-zà-ÿ])", low):
             constats.append(("ERREUR", "nom d'enseigne, de fournisseur ou de marque (§5, §6)", e))
+    for phrase in re.split(r"(?<=[.!?…])\s+|\n", low):
+        for m in SUPERLATIF.finditer(phrase):
+            if SUJET_SEHORIA.search(phrase):
+                constats.append(("ERREUR", "superlatif sur Sehoria : à prouver ou à retirer (§6)", m.group(0)))
+            else:
+                constats.append(("ALERTE", "superlatif : permis dans le contenu métier, à relire (§6)", m.group(0)))
     niveau, motif, msg = VOUVOIEMENT
     for m in re.finditer(motif, low):
         constats.append((niveau, msg, m.group(0)))
