@@ -34,6 +34,7 @@ REGLES_GENERALES = [
     ("ERREUR", r"ind[ée]pendants?", "aucune restriction aux « indépendants » (§6)"),
     ("ERREUR", r"\bHT\b", "jamais « HT » (§6)"),
     ("ERREUR", r"comptoir", "en optique on vend à la « table de vente », jamais au « comptoir » (§6, règle de Togi)"),
+    ("ERREUR", r"(?<![a-zà-ÿ])chiffons?(?![a-zà-ÿ])", "en optique on dit « chamoisine », jamais « chiffon » (§6, règle de Togi du 12/10)"),
     ("ERREUR", r"plus choisi", "aucun badge « le plus choisi » (§6)"),
     ("ERREUR", r"2\s?000\s+opticiens", "formule interdite (§6)"),
     ("ERREUR", r"t[ée]moign", "aucun témoignage (§6)"),

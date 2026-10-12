@@ -4,7 +4,7 @@ Seule source du texte des pages.
 
 Balisage : [[mot]] souligné à la main · {{mot}} surligné · ~ espace insécable.
 Règles d'or (charte §0) : la valeur dans chaque publication ; un enfant de 10 ans comprend tout.
-« Table de vente », jamais « comptoir ». Opticiens vouvoyés ; phrase B sans « tu » ni « vous ».
+« Table de vente », jamais « comptoir » ; « chamoisine », jamais « chiffon ». Opticiens vouvoyés ; phrase B sans « tu » ni « vous ».
 """
 
 SEMAINE = "03"
