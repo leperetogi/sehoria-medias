@@ -224,8 +224,8 @@
       g.appendChild(rc.ellipse(cx + r + e, yy, r * 2, r * 1.72, { ...opt, stroke: "none", fill: "#3A3350", fillStyle: "solid", seed: opt.seed + 30 }));
       g.appendChild(rc.ellipse(cx - r - e, yy, r * 1.3, r * 1.05, { ...opt, stroke: "none", fill: "#8E88A3", fillStyle: "hachure", hachureGap: 7, hachureAngle: -40, fillWeight: 2, seed: opt.seed + 31 }));
       const sx = cx + r + e + w * 0.06, sy = cy - w * 0.25, sr = w * 0.085;
-      g.appendChild(rc.circle(sx, sy, sr * 2, { ...opt, seed: opt.seed + 9 }));
-      for (let i = 0; i < 8; i++) {
+      if (!o.sansSoleil) g.appendChild(rc.circle(sx, sy, sr * 2, { ...opt, seed: opt.seed + 9 }));
+      for (let i = 0; i < (o.sansSoleil ? 0 : 8); i++) {
         const a = i * Math.PI / 4;
         g.appendChild(rc.line(sx + Math.cos(a) * sr * 1.45, sy + Math.sin(a) * sr * 1.45, sx + Math.cos(a) * sr * 2.1, sy + Math.sin(a) * sr * 2.1, { ...opt, strokeWidth: 3.5, seed: opt.seed + 10 + i }));
       }

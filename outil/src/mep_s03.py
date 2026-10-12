@@ -55,7 +55,10 @@ def placer(taille_src, boite, rot=0, gauche=None, haut=None, droite=None, bas=No
 
 def point(code, pts, boite, rot=0, pad=PAD, **pos):
     """Où tombent, sur la page, des points de la découpe source (après rotation, mise à l'échelle, contour)."""
-    im = Image.open(ASSETS / "decoupes" / f"{code}.png").convert("RGBA")
+    src = ASSETS / "decoupes" / f"{code}.png"
+    if not src.exists():
+        src = next((ASSETS / "decoupes").glob(code + ".*"))
+    im = Image.open(src).convert("RGBA")
     W, H = im.size
     if rot:
         r = im.rotate(rot, resample=Image.BICUBIC, expand=True)
@@ -169,7 +172,7 @@ def a1_01_affiche():
 # ============ A2 · Le samedi se prépare le vendredi ============
 
 def a2_01_actuel():
-    """Style actuel (violet + terracotta) : cadran découpé, note à la main « 19 h, on prépare… »."""
+    """Style actuel (violet + terracotta) : cadran découpé, note à la main « 18 h, on prépare… »."""
     p = A2[0]
     boite, rot, pos = (600, 760), -6, {"droite": 30, "haut": 470}
     (centre,), _ = point("U13", [REPERES["U13"]["centre"]], boite, rot=rot, **pos)
@@ -187,22 +190,22 @@ def a2_01_actuel():
 
 
 def a2_01_affiche():
-    """Style affiche : « VENDREDI SOIR. » géant derrière le cadran."""
+    """Style affiche : « VENDREDI SOIR. » géant, la pendule en dessous : les deux mots se lisent en entier (Togi, 12/10)."""
     p = A2[0]
     debut, fin = p["titre"].split("[[")
     fin = fin.replace("]]", "")
-    boite, rot, pos = (540, 680), -5, {"gauche": 450, "haut": 560}
+    boite, rot, pos = (450, 480), -5, {"gauche": 560, "haut": 800}
     (centre,), _ = point("U13", [REPERES["U13"]["centre"]], boite, rot=rot, pad=0, **pos)
     mots = fin.rstrip(".").split()
     c = [
         texte(debut.strip(), 56, 84, 76, maxw=990, classe="affiche-texte"),
         mono("01/07", 60, 1268, 28),
-        geant([(mots[0].upper(), 192), (mots[1].upper() + ".", 388)], 50, 214, z=6),
+        geant([(mots[0].upper(), 230), (mots[1].upper() + ".", 465)], 50, 210, z=6),
         decoupe_nue("U13", boite, rot=rot, z=10, **pos),
-        main(p["main"], 70, 900, 70, r=-6, ident="note", maxw=360),
+        main(p["main"], 70, 930, 70, r=-6, ident="note", maxw=360),
     ]
     plan = [
-        {"t": "fleche", "de": [300, 1104], "a": [round(centre[0] - 270), round(centre[1] + 90)], "courbe": 0.35,
+        {"t": "fleche", "de": [300, 1134], "a": [round(centre[0] - 225), round(centre[1] + 50)], "courbe": 0.35,
          "c": "accent", "ep": 6, "tete": 26, "graine": 32},
         fleche_defiler(900, 1290),
     ]
@@ -243,10 +246,11 @@ def page_cta(ident, palette, fond, souligne, ligne1=CTA_MARQUE_1, ligne2=CTA_MAR
 # ============ A1 · Une option se propose avec une question (violet + crème) ============
 
 def a1_02():
-    """Le problème, qui accroche seul : le dialogue que tout opticien a déjà entendu."""
+    """Le problème, qui accroche seul : le dialogue que tout opticien a déjà entendu ; l'étiquette de prix qui pend."""
     p = A1[1]
     c = [
         texte(p["citation1"], 130, 150, 58, maxw=520, ident="q1", poids="700"),
+        decoupe("U15", (230, 560), gauche=815, haut=-170, rot=-7, recadrage=(0, 350, 246, 1147)),
         texte(p["citation2"].replace(" ", "~"), 470, 470, 76, ident="q2", classe="chute"),
         texte(p["texte"], 72, 880, 54, maxw=940),
         texte(couleur_soulignes(p["chute"], "violet"), 72, 1050, 76, maxw=940, classe="chute"),
@@ -275,34 +279,53 @@ def a1_03():
     return page("A1-03", c, plan, palette="creme", fond="papier-creme-3.png")
 
 
-def a1_valeur(ident, p, dessin, fond, chute=False):
-    """Pages 4 à 6 : la question à poser (feuille), le dessin de l'option, ce qu'on dit ensuite."""
+def a1_valeur(ident, p, fond, images=(), dessin=(), y_texte=960, y_chute=1060):
+    """Pages 4 à 6 : la question à poser (feuille), la photo de la situation, ce qu'on dit ensuite."""
     c = [numero(p["numero"], droite=64, haut=18, taille=220),
-         citation_feuille(p["citation"], y=236, taille=72)]
-    c.append(texte(p["texte"], 72, 900 if chute else 960, 56, maxw=940, poids="600"))
-    if chute:
-        c.append(texte(couleur_soulignes(p["chute"], "violet"), 72, 1060, 78, maxw=940, classe="chute"))
-    return page(ident, c, dessin, palette="creme", fond=fond)
+         citation_feuille(p["citation"], y=236, taille=72), *images,
+         texte(p["texte"], 72, y_texte, 56, maxw=940, poids="600")]
+    if p.get("chute"):
+        c.append(texte(couleur_soulignes(p["chute"], "violet"), 72, y_chute, 78, maxw=940, classe="chute"))
+    return page(ident, c, list(dessin), palette="creme", fond=fond)
 
 
 def a1_04():
-    return a1_valeur("A1-04", A1[3], [{"t": "icone", "nom": "antireflet", "x": 250, "y": 420, "w": 580, "c": "encre", "ep": 7,
-                                       "graine": 561}], "papier-creme-4.png")
+    """« Vous conduisez la nuit ? » : la route mouillée, les reflets des lampadaires."""
+    images = [decoupe("U16", (860, 380), gauche=86, haut=528, rot=-2, dechire=True, recadrage=(0, 250, 1600, 1000)),
+              ruban(440, 528, r=-5)]
+    return a1_valeur("A1-04", A1[3], "papier-creme-4.png", images, y_texte=1046)
 
 
 def a1_05():
-    return a1_valeur("A1-05", A1[4], [{"t": "icone", "nom": "photochromique", "x": 250, "y": 420, "w": 580, "c": "encre",
-                                       "ep": 7, "graine": 562}], "papier-creme-2.png")
+    """« Vous êtes souvent dehors ? » : le soleil (photo) au-dessus du verre qui fonce."""
+    images = [decoupe("U17", (280, 280), droite=80, haut=530)]
+    cx, cy, r = 1080 - 80 - (280 + 2 * PAD) + PAD + 140, 530 + PAD + 140, 140
+    rayons = [{"t": "fleche", "de": [round(cx + math.cos(a) * (r + 40)), round(cy + math.sin(a) * (r + 40))],
+               "a": [round(cx + math.cos(a) * (r + (66 if i % 2 else 80))), round(cy + math.sin(a) * (r + (66 if i % 2 else 80)))],
+               "courbe": 0, "c": "accent", "ep": 6, "tete": 0.1, "graine": 300 + i}
+              for i, a in enumerate(math.radians(-90 + k * 30) for k in range(12))]
+    dessin = rayons + [
+        {"t": "icone", "nom": "photochromique", "sansSoleil": True, "x": 60, "y": 540, "w": 520, "c": "encre", "ep": 7,
+         "graine": 562},
+        {"t": "fleche", "de": [628, 905], "a": [540, 888], "courbe": 0.3, "c": "accent", "ep": 6, "tete": 22, "graine": 19},
+    ]
+    return a1_valeur("A1-05", A1[4], "papier-creme-2.png", images, dessin)
 
 
 def a1_06():
+    """« Et au soleil, vous mettez quoi ? » : la paire de tous les jours (dessin), la paire de soleil (photo) entourée."""
+    boite, pos = (520, 260), {"gauche": 420, "haut": 528}
+    _, ratio = point("U18", [(0, 0)], boite, **pos)
+    im = Image.open(ASSETS / "decoupes" / "U18.png")
+    w, h = round(im.width * ratio), round(im.height * ratio)
+    images = [decoupe("U18", boite, **pos)]
     dessin = [
-        {"t": "soleil", "cx": 830, "cy": 560, "r": 52, "c": "accent", "graine": 521},
-        {"t": "lunettes", "cx": 360, "cy": 640, "r": 66, "rot": -6, "c": "encre", "ep": 6, "graine": 451},
-        {"t": "lunettes", "cx": 640, "cy": 760, "r": 70, "rot": 5, "c": "encre", "ep": 6, "pleines": True, "graine": 452},
-        {"t": "ellipse", "boite": [500, 680, 290, 160], "marge": 30, "c": "accent", "ep": 7, "graine": 23, "rot": 5},
+        {"t": "lunettes", "cx": 220, "cy": 640, "r": 56, "rot": -6, "c": "encre", "ep": 6, "graine": 451},
+        {"t": "fleche", "de": [330, 700], "a": [430, 720], "courbe": -0.3, "c": "accent", "ep": 6, "tete": 24, "graine": 20},
+        {"t": "ellipse", "boite": [pos["gauche"] + PAD, pos["haut"] + PAD, w, h], "marge": 26, "c": "accent", "ep": 7,
+         "graine": 23, "rot": 3},
     ]
-    return a1_valeur("A1-06", A1[5], dessin, "papier-creme-1.png", chute=True)
+    return a1_valeur("A1-06", A1[5], "papier-creme-1.png", images, dessin, y_texte=910)
 
 
 def a1_07():
@@ -313,81 +336,96 @@ def a1_07():
 # ============ A2 · Le samedi se prépare le vendredi (violet + terracotta) ============
 
 def a2_02():
-    """Le problème : samedi matin, tout arrive en même temps."""
+    """Le problème : samedi matin, tout arrive en même temps (le téléphone en photo, le reste dessiné)."""
     p = A2[1]
+    boite, pos = (430, 312), {"gauche": 70, "haut": 596}
+    sonne, _ = point("U19", [(1240, 60), (1290, 230), (1250, 400)], boite, **pos)
     c = [
         bandeau(p["texte"], 54, 92, 54, r=-1.2, variante="clair", maxw=970),
-        main("?", 790, 600, 200, r=8, ident="cherche"),
+        decoupe("U19", boite, contour="#FFFFFF", couleur=TERRA, **pos),
+        main("?", 790, 560, 200, r=8, ident="cherche"),
         texte(couleur_soulignes(p["chute"], "terracotta"), 72, 1040, 76, maxw=940, classe="chute"),
     ]
     plan = [
-        {"t": "visage", "cx": 150, "cy": 560, "r": 74, "sourire": False, "c": "encre", "graine": 741},
-        {"t": "visage", "cx": 310, "cy": 600, "r": 74, "sourire": False, "lunettes": True, "c": "encre", "graine": 742},
-        {"t": "visage", "cx": 470, "cy": 560, "r": 74, "sourire": False, "c": "encre", "graine": 743},
-        {"t": "telephone", "x": 210, "y": 720, "w": 150, "h": 270, "rot": -14, "c": "encre", "graine": 813},
-        {"t": "fleche", "de": [395, 760], "a": [430, 730], "courbe": 0, "c": "accent", "ep": 5, "tete": 0.1, "graine": 15},
-        {"t": "fleche", "de": [405, 805], "a": [450, 800], "courbe": 0, "c": "accent", "ep": 5, "tete": 0.1, "graine": 16},
-        {"t": "fleche", "de": [395, 850], "a": [430, 870], "courbe": 0, "c": "accent", "ep": 5, "tete": 0.1, "graine": 17},
-        {"t": "lunettes", "cx": 640, "cy": 900, "r": 34, "rot": -18, "c": "encre", "ep": 4.5, "graine": 431},
-        {"t": "lunettes", "cx": 820, "cy": 950, "r": 30, "rot": 22, "c": "encre", "ep": 4.5, "graine": 432},
-        {"t": "lunettes", "cx": 950, "cy": 880, "r": 28, "rot": -6, "c": "accent", "ep": 4.5, "graine": 433},
+        {"t": "visage", "cx": 150, "cy": 440, "r": 74, "sourire": False, "c": "encre", "graine": 741},
+        {"t": "visage", "cx": 310, "cy": 480, "r": 74, "sourire": False, "lunettes": True, "c": "encre", "graine": 742},
+        {"t": "visage", "cx": 470, "cy": 440, "r": 74, "sourire": False, "c": "encre", "graine": 743},
+    ]
+    for i, ((x, y), (dx, dy)) in enumerate(zip(sonne, [(44, -26), (54, 0), (44, 26)])):
+        plan.append({"t": "fleche", "de": [round(x + 14), round(y)], "a": [round(x + 14 + dx), round(y + dy)], "courbe": 0,
+                     "c": "accent", "ep": 5, "tete": 0.1, "graine": 15 + i})
+    plan += [
+        {"t": "lunettes", "cx": 700, "cy": 880, "r": 34, "rot": -18, "c": "encre", "ep": 4.5, "graine": 431},
+        {"t": "lunettes", "cx": 850, "cy": 950, "r": 30, "rot": 22, "c": "encre", "ep": 4.5, "graine": 432},
+        {"t": "lunettes", "cx": 960, "cy": 860, "r": 28, "rot": -6, "c": "accent", "ep": 4.5, "graine": 433},
     ]
     return page("A2-02", c, plan, palette="terracotta", fond="papier-creme-2.png")
 
 
 def a2_03():
+    """Les lunettes prêtes : la paire rangée dans son étui (photo), cochée."""
     p = A2[2]
     c = [numero(p["numero"], droite=64, haut=60, taille=280),
-         titre_bloc(p["titre"], p["texte"], maxw_titre=820, taille=86, taille_texte=60)]
-    plan = []
-    for i, (x, y, r) in enumerate([(70, 900, -4), (400, 930, 2), (730, 900, -2)]):
-        plan.append({"t": "etui", "x": x, "y": y, "w": 280, "h": 116, "rot": r, "c": "accent", "graine": 120 + 7 * i})
-        plan.append({"t": "coche", "x": x + 196, "y": y + 196, "taille": 62, "ep": 9, "graine": 150 + i})
+         titre_bloc(p["titre"], p["texte"], maxw_titre=820, taille=86, taille_texte=60),
+         decoupe("U20", (560, 410), gauche=210, haut=650, rot=-3, contour="#FFFFFF", couleur=TERRA)]
+    plan = [{"t": "coche", "x": 790, "y": 1010, "taille": 140, "ep": 13, "graine": 150}]
     return page("A2-03", c, plan, palette="terracotta", fond="papier-creme-4.png")
 
 
 def a2_04():
+    """Le planning affiché : la feuille punaisée (photo), qui fait quoi dessiné dessus."""
     p = A2[3]
+    boite, pos = (700, 480), {"gauche": 150, "haut": 500}
+    x0, y0, x1, y1 = REPERES["U21"]["feuille"]
+    (a, b), ratio = point("U21", [(x0, y0), (x1, y1)], boite, **pos)
     c = [numero(p["numero"], droite=64, haut=60, taille=280),
          titre_bloc(p["titre"], p["texte"], maxw_titre=780, taille=86, taille_texte=52, maxw_texte=920),
-         carte(240, 640, 600, 360, r=-2, ident="planning"),
-         ruban(450, 620, r=-5, variante="terracotta"),
+         decoupe("U21", boite, rot=0, dechire=True, contour="#FFFFFF", couleur=TERRA, **pos),
          texte(couleur_soulignes(p["chute"], "terracotta"), 72, 1090, 76, maxw=940, classe="chute")]
+    lw, lh = b[0] - a[0], b[1] - a[1]
     plan = []
     for i in range(3):
-        y = 720 + i * 100
-        plan.append({"t": "visage", "cx": 320, "cy": y, "r": 34, "c": "encre", "ep": 4, "graine": 750 + i})
-        plan.append({"t": "ecriture", "boite": [380, y - 34, 420, 60], "lignes": 1, "c": "encre", "ep": 4, "graine": 70 + i,
+        y = a[1] + lh * (0.36 + i * 0.22)
+        plan.append({"t": "visage", "cx": round(a[0] + lw * 0.2), "cy": round(y), "r": round(lw * 0.085), "c": "encre",
+                     "ep": 4, "graine": 750 + i})
+        plan.append({"t": "ecriture", "boite": [round(a[0] + lw * 0.34), round(y - lw * 0.07), round(lw * 0.56),
+                                                 round(lw * 0.13)], "lignes": 1, "c": "encre", "ep": 4, "graine": 70 + i,
                      "rot": -2})
+    plan.append({"t": "ecriture", "boite": [round(a[0] + lw * 0.3), round(a[1] + lh * 0.15), round(lw * 0.5),
+                                             round(lw * 0.12)], "lignes": 1, "c": "accent", "ep": 6, "graine": 69, "rot": -2})
     return page("A2-04", c, plan, palette="terracotta", fond="papier-creme-1.png")
 
 
 def a2_05():
+    """La table de vente prête : étui et lunettes (photo), chiffon et cordon dessinés à côté."""
     p = A2[4]
     c = [numero(p["numero"], droite=64, haut=60, taille=280),
          titre_bloc(p["titre"], p["texte"], maxw_titre=780, taille=88, taille_texte=56, maxw_texte=920),
-         carte(90, 690, 900, 280, r=1.5, ident="table"),
+         carte(80, 640, 920, 330, r=1.5, ident="table"),
+         decoupe("U22", (380, 380), gauche=96, haut=578, rot=-8, contour="#FFFFFF", couleur=TERRA, devant=True),
          texte(p["chute"], 72, 1080, 70, maxw=940, classe="chute")]
     plan = [
-        {"t": "etui", "x": 150, "y": 820, "w": 230, "h": 96, "rot": -6, "c": "accent", "graine": 141},
-        {"t": "gribouillis", "boite": [470, 760, 190, 150], "c": "#8E88A3", "ep": 6, "points": 70, "pas": 26, "graine": 17},
-        {"t": "infini", "x": 720, "y": 790, "w": 220, "c": "encre", "ep": 7, "graine": 78, "rot": -8},
+        {"t": "gribouillis", "boite": [560, 730, 170, 150], "c": "#8E88A3", "ep": 6, "points": 70, "pas": 26, "graine": 17},
+        {"t": "infini", "x": 770, "y": 770, "w": 190, "c": "encre", "ep": 7, "graine": 78, "rot": -8},
     ]
     return page("A2-05", c, plan, palette="terracotta", fond="papier-creme-3.png")
 
 
 def a2_06():
+    """La vitrine : les montures en présentoir (photo), celle qu'on change entourée."""
     p = A2[5]
+    boite, rot, pos = (940, 330), -1.5, {"gauche": 26, "haut": 462}
+    (a, b), _ = point("U23", [(990, 95), (1625, 335)], boite, rot=rot, **pos)
     c = [numero(p["numero"], droite=64, haut=60, taille=280),
          titre_bloc(p["titre"], maxw_titre=820, taille=80),
-         carte(120, 520, 560, 330, r=-2, ident="vitrine"),
-         texte(p["chute"], 72, 900, 66, maxw=940, classe="chute"),
+         decoupe("U23", boite, rot=rot, dechire=True, contour="#FFFFFF", couleur=TERRA, **pos),
+         texte(p["chute"], 72, 904, 66, maxw=940, classe="chute"),
          bandeau(p["bulle"], 300, 1090, 50, r=-2.5, variante="titre", maxw=700, ident="commentez")]
     plan = [
-        {"t": "lunettes", "cx": 260, "cy": 650, "r": 36, "rot": -4, "c": "encre", "ep": 5, "graine": 441},
-        {"t": "lunettes", "cx": 520, "cy": 640, "r": 36, "rot": 3, "c": "encre", "ep": 5, "graine": 442},
-        {"t": "lunettes", "cx": 400, "cy": 760, "r": 36, "rot": -2, "c": "accent", "ep": 6, "pleines": True, "graine": 443},
-        {"t": "fleche", "de": [800, 600], "a": [580, 750], "courbe": 0.4, "c": "accent", "ep": 6, "tete": 26, "graine": 18},
+        {"t": "ellipse", "boite": [round(a[0]), round(min(a[1], b[1]) - 6), round(b[0] - a[0]), round(abs(b[1] - a[1]) + 12)],
+         "marge": 22, "c": "accent", "ep": 7, "graine": 24, "rot": -2},
+        {"t": "fleche", "de": [960, 360], "a": [round((a[0] + b[0]) / 2 + 120), round(min(a[1], b[1]) - 30)], "courbe": -0.4,
+         "c": "accent", "ep": 6, "tete": 26, "graine": 18},
         {"t": "presse", "x": 110, "y": 1080, "w": 150, "h": 190, "rot": -6, "graine": 92},
     ]
     return page("A2-06", c, plan, palette="terracotta", fond="papier-creme-2.png")
@@ -421,7 +459,7 @@ def b1_01():
 ESSAI_PAGE1 = [a1_01_actuel, a1_01_affiche, a2_01_actuel, a2_01_affiche]
 PAGE1 = {"S03-A1": {"actuel": a1_01_actuel, "affiche": a1_01_affiche},
          "S03-A2": {"actuel": a2_01_actuel, "affiche": a2_01_affiche}}
-CHOIX_PAGE1 = {"S03-A1": "affiche", "S03-A2": "actuel"}   # en attente du choix de Togi
+CHOIX_PAGE1 = {"S03-A1": "affiche", "S03-A2": "affiche"}   # choix du 12/10 : les deux en style affiche
 
 PUBLICATIONS_MEP = {
     "S03-A1": [lambda: PAGE1["S03-A1"][CHOIX_PAGE1["S03-A1"]](), a1_02, a1_03, a1_04, a1_05, a1_06, a1_07],

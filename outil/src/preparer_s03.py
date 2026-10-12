@@ -121,12 +121,158 @@ def fauteuil():
     return {"taille": [bb[2] - bb[0], bb[3] - bb[1]], "pixels_refaits": int(m.sum())}
 
 
+# ---------------- photos ajoutées le 12/10 au soir (plus de photos, accord de Togi) ----------------
+
+def recadrer(code, boite, nom):
+    im = Image.open(SRC / f"{code}.jpg").convert("RGB").crop(boite)
+    im.save(OUT / f"{nom}.jpg", quality=93)
+    return {"taille": list(im.size), "recadrage": list(boite)}
+
+
+def detourer_zone(code, boite, nom, aire_min=3000, prep=None):
+    im = Image.open(SRC / f"{code}.jpg").convert("RGB")
+    if prep:
+        im = prep(im)
+    im = im.crop(boite)
+    alpha = garder_plus_grand(masque_rembg(im), aire_min=aire_min)
+    bb = enregistrer(im, alpha, nom)
+    return {"taille": [bb[2] - bb[0], bb[3] - bb[1]], "decalage": [boite[0] + bb[0], boite[1] + bb[1]]}
+
+
+def effacer_boites(im, boites, rayon=6, critere=None):
+    a = np.asarray(im.convert("RGB")).copy()
+    m = np.zeros(a.shape[:2], np.uint8)
+    for x0, y0, x1, y1 in boites:
+        m[y0:y1, x0:x1] = 255
+    if critere is not None:
+        m = np.where(critere(a), m, 0).astype(np.uint8)
+        m = cv2.dilate(m, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7)))
+    return Image.fromarray(cv2.inpaint(a, m, rayon, cv2.INPAINT_TELEA))
+
+
+def etiquette():
+    """U15 : l'étiquette kraft et sa ficelle (étiquettes vierges : aucun texte)."""
+    return detourer_zone("U15-etiquettes", (870, 0, 1200, 1170), "U15")
+
+
+def route():
+    """U16 : route mouillée la nuit, partie basse (reflets des lampadaires et des feux)."""
+    return recadrer("U16-route-nuit", (0, 640, 1600, 1840), "U16")
+
+
+def soleil_halo():
+    """U17 : le soleil et son halo, en rond."""
+    im = Image.open(SRC / "U17-soleil.jpg").convert("RGB")
+    cx, cy, r = 1166, 893, 880
+    f = 4
+    grand = np.zeros((im.height * f, im.width * f), np.uint8)
+    cv2.circle(grand, (cx * f, cy * f), r * f, 255, -1, cv2.LINE_AA)
+    alpha = cv2.resize(grand, (im.width, im.height), interpolation=cv2.INTER_AREA)
+    bb = enregistrer(im, alpha, "U17")
+    return {"taille": [bb[2] - bb[0], bb[3] - bb[1]]}
+
+
+def solaires():
+    """U18b : lunettes de soleil enveloppantes (petit marquage gravé sur la branche droite effacé).
+    U18 écartée : forme d'un modèle de marque connu, logo sur la branche et le verre."""
+    prep = lambda im: effacer_boites(im, [(1560, 480, 1625, 545)], rayon=5)
+    return detourer_zone("U18b-solaires", (350, 300, 2050, 1250), "U18", prep=prep)
+
+
+def vider_disque(a, c, r, plume=3):
+    """Remplace une étiquette ronde imprimée par un papier uni : ombrage lissé + grain (aucune lettre ne reste)."""
+    af = a.astype(np.float32)
+    lum = cv2.cvtColor(a, cv2.COLOR_RGB2GRAY)
+    disque = np.zeros(lum.shape, np.uint8)
+    cv2.circle(disque, c, r, 255, -1)
+    encre = ((lum < 175) & (disque > 0)).astype(np.uint8) * 255
+    encre = cv2.dilate(encre, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9)))
+    lisse = cv2.GaussianBlur(cv2.inpaint(a, encre, 7, cv2.INPAINT_TELEA).astype(np.float32), (0, 0), 12)
+    grain = np.random.default_rng(3).normal(0, 3.0, lum.shape).astype(np.float32)[..., None]
+    w = cv2.GaussianBlur((disque > 0).astype(np.float32), (0, 0), plume)[..., None]
+    return (af * (1 - w) + np.clip(lisse + grain, 0, 255) * w).astype(np.uint8)
+
+
+def telephone():
+    """U19 : téléphone à cadran ; l'étiquette du cadran (nom de la compagnie, consignes) devient un papier uni."""
+    prep = lambda im: Image.fromarray(vider_disque(np.asarray(im).copy(), (1238, 578), 76))
+    return detourer_zone("U19-telephone", (380, 120, 2400, 1600), "U19", prep=prep, aire_min=20000)
+
+
+def etui():
+    """U20 : lunettes rangées dans leur étui ouvert (le gris clair du couvercle, pris pour du fond, est rebouché)."""
+    from scipy.ndimage import binary_fill_holes
+    im = Image.open(SRC / "U20-etui.jpg").convert("RGB").crop((300, 760, 820, 1160))
+    alpha = garder_plus_grand(masque_rembg(im))
+    plein = binary_fill_holes(alpha > 127)
+    alpha = np.where(plein & (alpha < 255), 255, alpha).astype(np.uint8)
+    bb = enregistrer(im, alpha, "U20")
+    return {"taille": [bb[2] - bb[0], bb[3] - bb[1]]}
+
+
+def greffer_texture(a, boite, dy, sigma_bas=18, plume=10):
+    """Efface un marquage en relief : grain du cuir pris dy px plus haut, ombrage de la zone conservé."""
+    x0, y0, x1, y1 = boite
+    af = a.astype(np.float32)
+    m = np.zeros(a.shape[:2], np.uint8)
+    m[y0:y1, x0:x1] = 255
+    bas = cv2.GaussianBlur(cv2.inpaint(a, m, 9, cv2.INPAINT_TELEA).astype(np.float32), (0, 0), sigma_bas)
+    src = np.roll(af, dy, axis=0)
+    detail = src - cv2.GaussianBlur(src, (0, 0), sigma_bas)
+    w = np.clip(cv2.GaussianBlur((m > 0).astype(np.float32), (0, 0), plume)[..., None] * 1.6, 0, 1)
+    return (af * (1 - w) + np.clip(bas + detail, 0, 255) * w).astype(np.uint8)
+
+
+def gommer_branche(a, boite, seuil=28):
+    """Efface les inscriptions claires d'une branche sombre (top-hat), sans toucher au fil doré."""
+    x0, y0, x1, y1 = boite
+    z = a[y0:y1, x0:x1]
+    lum = cv2.cvtColor(z, cv2.COLOR_RGB2GRAY)
+    th = cv2.morphologyEx(lum, cv2.MORPH_TOPHAT, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11, 11)))
+    branche = cv2.morphologyEx((lum < 90).astype(np.uint8), cv2.MORPH_CLOSE,
+                               cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15)))
+    branche = cv2.erode(branche, np.ones((3, 3), np.uint8))
+    rouge_moins_bleu = z[..., 0].astype(int) - z[..., 2].astype(int)
+    texte = ((th > seuil) & (branche > 0) & (rouge_moins_bleu < 25)).astype(np.uint8) * 255
+    m = np.zeros(a.shape[:2], np.uint8)
+    m[y0:y1, x0:x1] = cv2.dilate(texte, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5)))
+    return cv2.inpaint(a, m, 4, cv2.INPAINT_TELEA)
+
+
+def lunettes_etui_table():
+    """U22 : étui en cuir et lunettes ; logo en relief de l'étui et inscriptions des branches effacés."""
+    def prep(im):
+        a = greffer_texture(np.asarray(im).copy(), (430, 1350, 675, 1540), 210)
+        a = gommer_branche(a, (1218, 1355, 1302, 1442))
+        a = gommer_branche(a, (1178, 1424, 1226, 1464))
+        return Image.fromarray(a)
+    return detourer_zone("U22-table", (300, 600, 1759, 2400), "U22", prep=prep, aire_min=20000)
+
+
+def liege():
+    """U21 : feuille blanche punaisée sur un tableau en liège (notes écrites et date coupées du cadre)."""
+    r = recadrer("U21-liege", (250, 250, 1660, 1250), "U21")
+    r["feuille"] = [605, 45, 1365, 955]   # dans le recadrage
+    return r
+
+
+def vitrine():
+    """U23 : montures anciennes en présentoir ; silhouette floue (reflet) hors cadre, lettres du dos du livre effacées."""
+    im = Image.open(SRC / "U23-vitrine.jpg").convert("RGB")
+    clair = lambda a: cv2.cvtColor(a, cv2.COLOR_RGB2GRAY) > 75
+    im = effacer_boites(im, [(850, 910, 940, 1005)], rayon=7, critere=clair)
+    im.crop((0, 690, 1650, 1230)).save(OUT / "U23.jpg", quality=93)
+    return {"taille": [1650, 540]}
+
+
 if __name__ == "__main__":
     import sys
-    faire = sys.argv[1:] or ["U12", "U13", "U14"]
+    faire = sys.argv[1:] or ["U12", "U13", "U14", "U15", "U16", "U17", "U18", "U19", "U20", "U21", "U22", "U23"]
     fichier = OUT / "reperes_s03.json"
     reperes = json.loads(fichier.read_text()) if fichier.exists() else {}
-    for code, f in {"U12": buste, "U13": pendule, "U14": fauteuil}.items():
+    for code, f in {"U12": buste, "U13": pendule, "U14": fauteuil, "U15": etiquette, "U16": route, "U17": soleil_halo,
+                    "U18": solaires, "U19": telephone, "U20": etui, "U21": liege, "U22": lunettes_etui_table,
+                    "U23": vitrine}.items():
         if code in faire:
             reperes[code] = f()
     fichier.write_text(json.dumps(reperes, indent=1), encoding="utf-8")
