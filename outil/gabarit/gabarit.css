@@ -77,7 +77,7 @@ sup{font-size:max(.6em, 28px);line-height:0;vertical-align:.55em}
 .logo{position:absolute;z-index:30;display:block}
 
 /* ---- style « affiche » (S03, essai) : fond encre, titre géant étroit derrière la découpe, une seule couleur vive ---- */
-.page.pal-affiche{--fond:#1E1930;--accent:var(--terracotta);--ombre:#0E0B18;color:var(--creme)}
+.page.pal-affiche{--fond:#26203A;--accent:var(--terracotta);--ombre:#0E0B18;color:var(--creme)}
 .page.pal-affiche .fond{opacity:1}
 .geant-affiche{font-family:"Anton",sans-serif;font-weight:400;text-transform:uppercase;color:var(--creme);
   line-height:.84;letter-spacing:-.005em;white-space:nowrap}
