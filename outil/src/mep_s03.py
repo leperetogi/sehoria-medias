@@ -397,16 +397,16 @@ def a2_04():
 
 
 def a2_05():
-    """La table de vente prête : étui et lunettes (photo), chiffon et cordon dessinés à côté."""
+    """La table de vente prête : étui et lunettes (photo), la chamoisine et le cordon dessinés à côté."""
     p = A2[4]
     c = [numero(p["numero"], droite=64, haut=60, taille=280),
          titre_bloc(p["titre"], p["texte"], maxw_titre=780, taille=88, taille_texte=56, maxw_texte=920),
-         carte(80, 640, 920, 330, r=1.5, ident="table"),
-         decoupe("U22", (380, 380), gauche=96, haut=578, rot=-8, contour="#FFFFFF", couleur=TERRA, devant=True),
-         texte(p["chute"], 72, 1080, 70, maxw=940, classe="chute")]
+         carte(70, 620, 940, 400, r=1.5, ident="table"),
+         decoupe("U22", (360, 360), gauche=84, haut=590, rot=-8, contour="#FFFFFF", couleur=TERRA, devant=True),
+         texte(p["chute"], 72, 1090, 70, maxw=940, classe="chute")]
     plan = [
-        {"t": "gribouillis", "boite": [560, 730, 170, 150], "c": "#8E88A3", "ep": 6, "points": 70, "pas": 26, "graine": 17},
-        {"t": "infini", "x": 770, "y": 770, "w": 190, "c": "encre", "ep": 7, "graine": 78, "rot": -8},
+        {"t": "chamoisine", "x": 540, "y": 700, "w": 200, "h": 190, "rot": -9, "c": "accent", "graine": 601},
+        {"t": "cordon", "cx": 870, "cy": 720, "r": 36, "chute": 200, "rot": 4, "c": "accent", "lunettes": "encre", "graine": 621},
     ]
     return page("A2-05", c, plan, palette="terracotta", fond="papier-creme-3.png")
 

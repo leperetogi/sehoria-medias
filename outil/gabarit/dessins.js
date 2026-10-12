@@ -518,8 +518,53 @@
     svg.appendChild(g);
   }
 
+  /* ================= semaine 03 ================= */
+
+  /* chamoisine : carré de feutrine aux bords crantés, teinté, deux plis souples */
+  function chamoisine(rc, svg, o, page) {
+    const { x, y } = o, w = o.w || 200, h = o.h || w, d = o.dent || 9, g = document.createElementNS(NS, "g");
+    const c = couleur(page, o.c || "accent");
+    const opt = { stroke: c, strokeWidth: o.ep || 4, roughness: 0.9, bowing: 0.6, seed: o.graine || 601 };
+    const cran = (ax, ay, bx, by, n, nx, ny) => {   // n dents de a vers b, pointes vers l'intérieur (nx, ny)
+      const pts = [];
+      for (let i = 0; i <= 2 * n; i++) {
+        const t = i / (2 * n), k = i % 2 ? d : 0;
+        pts.push([ax + (bx - ax) * t + nx * k, ay + (by - ay) * t + ny * k]);
+      }
+      return pts;
+    };
+    const nW = Math.round(w / 20), nH = Math.round(h / 20);
+    const contour = [...cran(x, y, x + w, y, nW, 0, 1), ...cran(x + w, y, x + w, y + h, nH, -1, 0).slice(1),
+                     ...cran(x + w, y + h, x, y + h, nW, 0, -1).slice(1), ...cran(x, y + h, x, y, nH, 1, 0).slice(1)];
+    g.appendChild(rc.polygon(contour, { ...opt, fill: o.teinte || "#EBC3A3", fillStyle: "solid" }));
+    g.appendChild(rc.polygon(contour, { ...opt, stroke: "none", fill: c, fillStyle: "hachure", hachureGap: 9, hachureAngle: -38,
+                                        fillWeight: 1.8, seed: opt.seed + 1 }));
+    g.appendChild(rc.curve([[x + w * 0.12, y + h * 0.3], [x + w * 0.45, y + h * 0.42], [x + w * 0.88, y + h * 0.36]],
+                           { ...opt, strokeWidth: 3, seed: opt.seed + 2 }));
+    g.appendChild(rc.curve([[x + w * 0.2, y + h * 0.72], [x + w * 0.55, y + h * 0.62], [x + w * 0.86, y + h * 0.7]],
+                           { ...opt, strokeWidth: 3, seed: opt.seed + 3 }));
+    if (o.rot) g.setAttribute("transform", `rotate(${o.rot} ${x + w / 2} ${y + h / 2})`);
+    svg.appendChild(g);
+  }
+
+  /* cordon : une paire de lunettes, le cordon pend d'une branche à l'autre (embouts au bout des branches) */
+  function cordon(rc, svg, o, page) {
+    const { cx, cy, r } = o, e = r * 0.34, g = document.createElementNS(NS, "g");
+    const opt = { stroke: couleur(page, o.lunettes || "encre"), strokeWidth: o.ep || 5, roughness: 1, bowing: 1, seed: o.graine || 621 };
+    lunettesTrait(rc, g, cx, cy, r, opt, false);
+    const bx = 2 * r + e + r * 0.45, by = -r * 0.62, chute = o.chute || r * 4;
+    const c = couleur(page, o.c || "accent"), oc = { ...opt, stroke: c, strokeWidth: (o.ep || 5) * 0.9 };
+    const g0 = [cx - bx, cy + by], d0 = [cx + bx, cy + by];
+    g.appendChild(rc.curve([g0, [cx - bx * 1.05, cy + chute * 0.45], [cx - bx * 0.55, cy + chute * 0.9], [cx, cy + chute],
+                            [cx + bx * 0.55, cy + chute * 0.9], [cx + bx * 1.05, cy + chute * 0.45], d0], { ...oc, seed: opt.seed + 9 }));
+    [g0, d0].forEach(([px, py], i) => g.appendChild(rc.ellipse(px, py + r * 0.12, r * 0.32, r * 0.5,
+      { ...oc, fill: c, fillStyle: "solid", seed: opt.seed + 12 + i })));
+    if (o.rot) g.setAttribute("transform", `rotate(${o.rot} ${cx} ${cy + chute / 2})`);
+    svg.appendChild(g);
+  }
+
   const PRIMITIVES = { fleche, gribouillis, ellipse, bulle, batons, tableau, icone, ecriture, infini, feutre, presse, etui, coche, manque, croix, montee,
-                       lunettes, soleil, nuage, visage, telephone, bulleVide };
+                       lunettes, soleil, nuage, visage, telephone, bulleVide, chamoisine, cordon };
 
   async function dessiner() {
     await document.fonts.ready;

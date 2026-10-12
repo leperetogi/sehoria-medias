@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Semaine 03 — publications du 20 au 24/10. Textes, photos et fiche « Commentez SAMEDI » validés par Togi le 12/10.
+"""Semaine 03 — publications du 20 au 24/10. Textes, photos et fiche « Commentez SAMEDI » validés par Togi le 12/10 (corrections du soir : antireflet, chamoisine, message privé).
 Seule source du texte des pages.
 
 Balisage : [[mot]] souligné à la main · {{mot}} surligné · ~ espace insécable.
@@ -82,7 +82,7 @@ PUBLICATIONS = [
              "chute": "Sa réponse vous dit [[quoi proposer.]]"},
             {"type": "valeur", "numero": "2",
              "citation": "«~Vous conduisez la nuit~?~»",
-             "texte": "S’il dit oui, parlez de l’antireflet~: moins de reflets sur les verres."},
+             "texte": "S’il dit oui, parlez de l’antireflet~: moins d’éblouissement et plus de sérénité sur la route de nuit."},
             {"type": "valeur", "numero": "3",
              "citation": "«~Vous êtes souvent dehors~?~»",
              "texte": "Parlez du verre qui fonce au soleil, et redevient clair à l’intérieur."},
@@ -126,12 +126,12 @@ PUBLICATIONS = [
              "texte": "qui accueille, qui fait l’atelier, qui part en pause, et à quelle heure.",
              "chute": "Personne ne se demande [[quoi faire.]]"},
             {"type": "valeur", "numero": "3",
-             "titre": "La table de vente, prête~:", "texte": "chiffons, étuis, cordons à portée de main.",
+             "titre": "La table de vente, prête~:", "texte": "chamoisines, étuis, cordons à portée de main.",
              "chute": "Plus besoin de se lever au milieu d’une vente."},
             {"type": "valeur", "numero": "4",
-             "titre": "La vitrine~: un coup de chiffon, et une monture qu’on change.",
+             "titre": "La vitrine~: un coup de chamoisine, et une monture qu’on change.",
              "chute": "Samedi, tout le monde passe devant.",
-             "bulle": "Commentez SAMEDI~: la check-list à imprimer"},
+             "bulle": "Commentez SAMEDI~: on vous envoie en message privé la check-list à imprimer"},
             {"type": "cta"},
         ],
         "legendes": {
@@ -139,7 +139,7 @@ PUBLICATIONS = [
                 "Samedi, 10~h~: trois clients attendent, et on cherche une paire de lunettes.\n"
                 "Le samedi se prépare le vendredi soir~: lunettes prêtes, planning affiché, table de vente rangée, "
                 "vitrine qui change.\n\n"
-                "Commentez SAMEDI~: on vous envoie la check-list à imprimer.\n"
+                "Commentez SAMEDI~: on vous envoie en message privé la check-list à imprimer.\n"
                 "Demander un accès~: lien en bio.\n\n"
                 "#opticien #opticienne #magasindoptique #equipedevente #vitrine"),
             "linkedin": (
@@ -148,9 +148,9 @@ PUBLICATIONS = [
                 "Le samedi se prépare le vendredi soir~:\n"
                 "→ Les lunettes que les clients viennent chercher~: propres, vérifiées, rangées par nom.\n"
                 "→ Le planning affiché~: qui accueille, qui fait l’atelier, qui part en pause, et à quelle heure.\n"
-                "→ La table de vente prête~: chiffons, étuis, cordons à portée de main.\n"
-                "→ La vitrine~: un coup de chiffon, et une monture qu’on change.\n\n"
-                "Commentez SAMEDI~: on vous envoie la check-list à imprimer.\n\n"
+                "→ La table de vente prête~: chamoisines, étuis, cordons à portée de main.\n"
+                "→ La vitrine~: un coup de chamoisine, et une monture qu’on change.\n\n"
+                "Commentez SAMEDI~: on vous envoie en message privé la check-list à imprimer.\n\n"
                 "Lancez vos challenges. L’app compte les ventes.\n"
                 "Demander un accès~: https://sehoria.fr\n"
                 "Premier mois offert, sans engagement, résiliable à tout moment."),
@@ -183,8 +183,8 @@ FICHE = {
         "Les lunettes que les clients viennent chercher~: propres, vérifiées, rangées par nom",
         "Les clients dont les lunettes sont prêtes ont été prévenus",
         "Le planning de samedi est affiché~: qui accueille, qui fait l’atelier, les pauses",
-        "La table de vente est prête~: chiffons, étuis, cordons",
-        "La vitrine~: un coup de chiffon, une monture changée",
+        "La table de vente est prête~: chamoisines, étuis, cordons",
+        "La vitrine~: un coup de chamoisine, une monture changée",
         "Les rendez-vous de samedi sont relus ensemble",
         "La caisse est prête pour l’ouverture",
         "Un merci à l’équipe pour la semaine",
