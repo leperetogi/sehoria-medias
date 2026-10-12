@@ -3,6 +3,8 @@
 @font-face{font-family:"Fraunces";src:url("../node_modules/@fontsource-variable/fraunces/files/fraunces-latin-full-italic.woff2") format("woff2");font-weight:100 900;font-style:italic;}
 @font-face{font-family:"JetBrains Mono";src:url("../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2") format("woff2");font-weight:100 800;}
 @font-face{font-family:"Gochi Hand";src:url("../node_modules/@fontsource/gochi-hand/files/gochi-hand-latin-400-normal.woff2") format("woff2");}
+/* S03 — essai du style « affiche » (police étroite, à valider par Togi) */
+@font-face{font-family:"Anton";src:url("../node_modules/@fontsource/anton/files/anton-latin-400-normal.woff2") format("woff2");}
 
 :root{
   --fond:#FBF5EF; --creme:#FBF5EF; --creme-vif:#FFFCF7; --encre:#26203A; --texte:#3A3350; --gris:#6E6782;
@@ -73,6 +75,17 @@ sup{font-size:max(.6em, 28px);line-height:0;vertical-align:.55em}
 .decoupe{position:absolute;z-index:10;display:block}
 .decoupe.devant{z-index:25}
 .logo{position:absolute;z-index:30;display:block}
+
+/* ---- style « affiche » (S03, essai) : fond encre, titre géant étroit derrière la découpe, une seule couleur vive ---- */
+.page.pal-affiche{--fond:#1E1930;--accent:var(--terracotta);--ombre:#0E0B18;color:var(--creme)}
+.page.pal-affiche .fond{opacity:1}
+.geant-affiche{font-family:"Anton",sans-serif;font-weight:400;text-transform:uppercase;color:var(--creme);
+  line-height:.84;letter-spacing:-.005em;white-space:nowrap}
+.affiche-texte{font-weight:600;font-variation-settings:"opsz" 72,"SOFT" 30;color:var(--creme);line-height:1.12;text-wrap:balance}
+.pal-affiche .mono{color:var(--creme);opacity:.92}
+.pal-affiche .main{color:var(--terracotta)}
+.pal-affiche .bandeau{background:var(--terracotta);color:var(--creme)}
+.decoupe.nue{filter:drop-shadow(0 24px 30px rgba(0,0,0,.45))}
 
 /* ---- repères d'essai (jamais publiés) ---- */
 .essai .page::after{content:"";position:absolute;inset:0;pointer-events:none}

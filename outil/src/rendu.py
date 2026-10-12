@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from composants import document, RACINE
 from controle import verifier, compter_mots, normaliser
 
-POLICES_ATTENDUES = ("Fraunces", "JetBrainsMono", "JetBrains", "GochiHand", "Gochi")
+POLICES_ATTENDUES = ("Fraunces", "JetBrainsMono", "JetBrains", "GochiHand", "Gochi", "Anton")  # Anton : essai « affiche » S03
 
 JS_CONTROLES = r"""
 () => {
