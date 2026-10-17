@@ -29,6 +29,9 @@ ENSEIGNES = [
     "tesla", "roadster", "cybertruck", "spacex", "musk",
 ]
 
+# Noms autorisés par Togi pour une publication précise (fixés par semaine.py depuis semaineNN.EXCEPTIONS_MARQUES)
+EXCEPTIONS = set()
+
 REGLES_GENERALES = [
     ("ERREUR", r"gamif|ludifi", "« gamification » interdit (§6)"),
     ("ERREUR", r"\d+\s?%|pour ?cent", "statistique de performance interdite (§6)"),
@@ -79,6 +82,8 @@ def verifier(texte: str, contexte: str = "A"):
         for m in re.finditer(motif, t if motif == r"\bHT\b" else low):
             constats.append((niveau, msg, m.group(0)))
     for e in ENSEIGNES:
+        if e in EXCEPTIONS:
+            continue
         if re.search(r"(?<![a-zà-ÿ])" + re.escape(e) + r"(?![a-zà-ÿ])", low):
             constats.append(("ERREUR", "nom d'enseigne, de fournisseur ou de marque (§5, §6)", e))
     for phrase in re.split(r"(?<=[.!?…])\s+|\n", low):

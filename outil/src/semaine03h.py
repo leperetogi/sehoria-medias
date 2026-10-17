@@ -9,12 +9,31 @@ Balisage : [[mot]] souligné à la main · {{mot}} surligné · ~ espace inséca
 
 SEMAINE = "03h"
 
+# Exception au §6 décidée par Togi le 17/10 à 15 h 06 : le nom de la marque paraît une fois, dans le libellé
+# d'actualité de la page 1, écrit en texte simple (ni logo, ni image, ni photo officielle : refusées).
+EXCEPTIONS_MARQUES = {"tesla"}
+
 # Photos (téléchargées par GitHub — photos.py 03)
 PHOTOS = {
-    "U24": {"sujet": "Voiture entière sous une housse, trois quarts arrière (page 1) ; aucune marque ni plaque visible",
-            "id": "ezBhFaOL6BY", "auteur": "JP Peluffo",
-            "url": "https://unsplash.com/photos/a-car-covered-in-a-white-tarp-parked-on-the-side-of-the-road-ezBhFaOL6BY",
-            "ecartee": "-ZIfQqO1K1o (Matthew Woinarowicz) : téléchargée, l'avant seul de la voiture, coupé par le cadre"},
+    # Refonte du 17/10 à 15 h (Togi : « pas assez pro », « trop de dessins ») : photos de mise en situation, validées
+    "U27": {"sujet": "Voiture sous une housse, garée devant une maison (p. 1, pleine page) ; plaque effacée",
+            "id": "QJWk6LLOMdQ", "auteur": "Zachary Keimig",
+            "url": "https://unsplash.com/photos/blue-car-covered-with-blue-textile-QJWk6LLOMdQ"},
+    "U28": {"sujet": "Un client de dos à la porte d'un magasin d'optique, le soir (p. 2) ; enseigne, marques et affiches hors cadre",
+            "id": "rOC-_ssUw2o", "auteur": "Isaac Owens",
+            "url": "https://unsplash.com/photos/person-in-doorway-of-optician-shop-rOC-_ssUw2o"},
+    "U29": {"sujet": "Calendrier en gros plan, une date entourée (p. 3) ; mois, année et jours anglais hors cadre",
+            "id": "P1kP-BfIelI", "auteur": "Glen Carrie",
+            "url": "https://unsplash.com/photos/a-close-up-of-a-calendar-with-a-red-marker-P1kP-BfIelI"},
+    "U30": {"sujet": "Mains qui écrivent un message sur un téléphone (p. 4)", "id": "BjhUu6BpUZA",
+            "auteur": "Priscilla Du Preez", "url": "https://unsplash.com/photos/person-using-smartphone-BjhUu6BpUZA"},
+    "U25": {"sujet": "Tasse de café et carnet (p. 5) ; recadrée sous le mot « NOTES »", "id": "ibYL9nBsNNw",
+            "auteur": "Suzanne Skeen", "url": "https://unsplash.com/photos/ibYL9nBsNNw"},
+    "U31": {"sujet": "Une main tend une paire de lunettes (p. 6)", "id": "fI0_v1y6rGE", "auteur": "GlassesShop",
+            "url": "https://unsplash.com/photos/a-person-holding-a-pair-of-glasses-in-their-hand-fI0_v1y6rGE"},
+    "U26": {"sujet": "Petit tournevis à manche transparent (p. 6)", "id": "lH-UZuoG-aY", "auteur": "Steve A Johnson",
+            "url": "https://unsplash.com/photos/red-and-silver-screw-driver-lH-UZuoG-aY"},
+    # Écartées après la première version : U24/U24b voitures bâchées en découpe (page jugée « pas assez pro »)
 }
 
 CTA_MARQUE_1 = "Lancez vos challenges."
@@ -35,7 +54,7 @@ PUBLICATIONS = [
         "id": "S03-H1", "format": "A", "pilier": "Les astuces (le délai des lunettes)", "slug": "delai-tenu",
         "titre": "Un délai qu’on tient", "palette": "terracotta",
         "pages": [
-            {"type": "accroche", "photo": "U24", "geant": "9 ans",
+            {"type": "accroche", "photo": "U27", "geant": "9 ans", "libelle": "Actu · Tesla · 15/10",
              "bandeau": "Une voiture promise il y a près de neuf ans. Enfin montrée. Fabriquée dans deux ans.",
              "main": "Votre client, lui, attend ses lunettes [[jeudi.]]"},
             {"type": "probleme",

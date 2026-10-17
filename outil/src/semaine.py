@@ -16,6 +16,8 @@ _args = sys.argv[1:]
 _num = _args.pop(0) if _args and re.match(r"^\d+[a-z]?$", _args[0]) else "02"   # « 03h » : hors-série
 _txt = importlib.import_module(f"semaine{_num}")
 PUBLICATIONS, SEMAINE = _txt.PUBLICATIONS, _txt.SEMAINE
+import controle
+controle.EXCEPTIONS |= set(getattr(_txt, "EXCEPTIONS_MARQUES", ()))   # ex. S03h : « Tesla », accord de Togi du 17/10
 PUBLICATIONS_MEP = importlib.import_module(f"mep_s{_num}").PUBLICATIONS_MEP
 SLUGS = getattr(_txt, "SLUGS", {"S01-A1": "votre-premier-challenge", "S01-A2": "tableau-a-batons", "S01-B1": "rivet-par-rivet"})
 LIVRAISON = RACINE / "livraison" / f"S{SEMAINE}"

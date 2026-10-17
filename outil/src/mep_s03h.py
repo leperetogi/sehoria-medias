@@ -127,121 +127,98 @@ def page_cta(ident, palette, fond, souligne, ligne1=CTA_MARQUE_1, ligne2=CTA_MAR
 
 
 # ============ H1 · Un délai qu'on tient (violet + terracotta) ============
-
-def h1_01():
-    """Affiche : la scène que tout le monde a vue, sans l'image de personne. La voiture anonyme sous sa housse
-    décolle de la rampe, nez en l'air, dans la fumée (générée) ; « 9 ANS » géant ; le buzz dit par le texte ;
-    la chute à la main."""
-    p = H1[0]
-    c = [
-        decoupe_nue("U24", (720, 400), gauche=60, haut=90, rot=-14, miroir=True, z=10),
-        fumee([((770, 392), (880, 420), (1010, 560), 10, 74, 0.95),
-               ((730, 440), (770, 560), (660, 640), 9, 56, 0.8),
-               ((470, 430), (430, 520), (300, 570), 7, 46, 0.6)], "h1", z=5),
-        geant([(p["geant"].upper(), 360)], 46, 590, z=6),
-        texte(une_phrase_par_ligne(p["bandeau"]), 56, 900, 48, maxw=980, classe="affiche-texte"),
-        main(couleur_soulignes(p["main"], "terracotta"), 56, 1090, 64, r=-2, maxw=960),
-        mono("01/07", 60, 1268, 28),
-    ]
-    plan = [
-        {"t": "rampe", "x": 930, "y": 860, "w": 100, "h": 560, "courbe": 150, "bord": "accent", "c": "creme", "graine": 1311},
-        fleche_defiler(900, 1290),
-    ]
-    return page("H1-01", c, plan, palette="affiche", fond=fond_encre(), grille=False)
-
-
-def h1_02():
-    """Le problème, qui accroche seul : le client (sans lunettes : elles ne sont pas prêtes) et le vendeur."""
-    p = H1[1]
-    c = [
-        texte(p["citation1"], 120, 140, 58, maxw=560, ident="q1", poids="700"),
-        texte(p["citation2"].replace(" ", "~"), 440, 470, 68, ident="q2", classe="chute"),
-        texte(p["texte"], 72, 880, 56, maxw=940, poids="600"),
-        texte(couleur_soulignes(p["chute"], "terracotta"), 72, 990, 72, maxw=940, classe="chute"),
-    ]
-    plan = [
-        {"t": "bulle", "autour": "#q1", "queue": [230, 500], "c": "encre", "graine": 11, "marge": 74, "margeY": 58, "rot": -3},
-        {"t": "visage", "cx": 220, "cy": 630, "r": 100, "sourire": False, "c": "encre", "graine": 771},
-        {"t": "bulle", "autour": "#q2", "queue": [800, 660], "c": "accent", "graine": 12, "marge": 64, "margeY": 48, "rot": 3},
-        {"t": "visage", "cx": 850, "cy": 750, "r": 86, "sourire": False, "lunettes": True, "c": "encre", "graine": 772},
-    ]
-    return page("H1-02", c, plan, palette="terracotta", fond="papier-creme-2.png")
-
-
-def h1_03():
-    """Annoncer 7 quand le verre arrive en 5 : deux feuilles de calendrier, le 5 barré, le 7 entouré."""
-    p = H1[2]
-    c = [numero(p["numero"], droite=64, haut=60, taille=280),
-         titre_bloc(p["titre"], p["texte"], maxw_titre=800, taille=88, taille_texte=60),
-         carte(150, 590, 280, 300, r=-4, ident="cal5"),
-         carte(640, 590, 280, 300, r=3, ident="cal7"),
-         main("5", 245, 640, 220, r=-4, couleur="#26203A", ident="n5"),
-         main("7", 735, 640, 220, r=3, ident="n7"),
-         texte(couleur_soulignes(p["chute"], "terracotta"), 72, 1010, 74, maxw=940, classe="chute")]
-    plan = [
-        {"t": "croix", "x": 290, "y": 745, "taille": 80, "ep": 7, "c": "accent", "graine": 141},
-        {"t": "fleche", "de": [450, 740], "a": [610, 740], "courbe": -0.3, "c": "accent", "ep": 7, "tete": 28, "graine": 22},
-        {"t": "ellipse", "boite": [670, 625, 220, 240], "marge": 18, "c": "accent", "ep": 8, "graine": 25, "rot": 4},
-    ]
-    return page("H1-03", c, plan, palette="terracotta", fond="papier-creme-3.png")
-
-
-def h1_04():
-    """Prévenir avant : le téléphone dessiné, le message qui part, le client prévenu chez lui."""
-    p = H1[3]
-    c = [numero(p["numero"], droite=64, haut=60, taille=280),
-         titre_bloc(p["titre"], p["texte"], maxw_titre=780, taille=88, taille_texte=54, maxw_texte=900),
-         texte(couleur_soulignes(p["chute"], "terracotta"), 72, 1110, 78, maxw=940, classe="chute")]
-    plan = [
-        {"t": "telephone", "x": 170, "y": 640, "w": 210, "h": 380, "rot": -6, "graine": 811},
-        {"t": "bulleVide", "cx": 560, "cy": 700, "w": 300, "h": 170, "queue": [400, 780], "c": "accent", "points": True,
-         "graine": 911},
-        {"t": "fleche", "de": [700, 790], "a": [790, 880], "courbe": 0.3, "c": "accent", "ep": 6, "tete": 24, "graine": 26},
-        {"t": "visage", "cx": 880, "cy": 950, "r": 88, "c": "encre", "graine": 773},
-    ]
-    return page("H1-04", c, plan, palette="terracotta", fond="papier-creme-4.png")
-
+# Refonte du 17/10 à 15 h (Togi : « pas assez pro », « trop de dessins ») : une photo de mise en situation par page,
+# grande, en noir et blanc ; les dessins se limitent aux annotations à la main.
 
 PAD = 14 + 11 + 13 + 6  # marge ajoutée par le sticker (contour blanc + contour décalé)
 
 
+def h1_01():
+    """Affiche pleine page : la voiture sous sa housse (photo en bichromie encre / crème), le libellé d'actualité
+    (« ACTU · TESLA · 15/10 », accord de Togi), « 9 ANS » géant au-dessus, le buzz dit en trois lignes, la chute à la main."""
+    p = H1[0]
+    libelle = ('<div class="bloc" style="left:60px;top:58px;z-index:30"><div class="mono" style="font-size:30px;'
+               'background:#C06B3E;color:#FBF5EF;opacity:1;padding:.34em .72em .3em;letter-spacing:.16em;'
+               f'box-shadow:6px 6px 0 #0E0B18">{md(p["libelle"])}</div></div>')
+    c = [
+        libelle,
+        geant([(p["geant"].upper(), 300)], 46, 128, z=6),
+        texte(une_phrase_par_ligne(p["bandeau"]), 56, 958, 46, maxw=980, classe="affiche-texte"),
+        main(couleur_soulignes(p["main"], "terracotta"), 56, 1118, 60, r=-2, maxw=980),
+        mono("01/07", 60, 1272, 28),
+    ]
+    return page("H1-01", c, [fleche_defiler(900, 1292)], palette="affiche", fond="decoupes/H1-fond.jpg", grille=False)
+
+
+def h1_02():
+    """Le problème, qui accroche seul : le client à la porte du magasin (photo), sa question, la réponse."""
+    p = H1[1]
+    c = [
+        decoupe("U28", (380, 960), gauche=36, haut=120, rot=-2, dechire=True, contour="#FFFFFF", couleur=TERRA),
+        bandeau(p["citation1"], 540, 150, 54, r=-1.5, variante="clair", maxw=480, ident="q1"),
+        bandeau(p["citation2"].replace(" ", "~"), 536, 420, 52, r=2, ident="q2", maxw=480),
+        texte(p["texte"], 548, 640, 48, maxw=470, poids="600"),
+        texte(couleur_soulignes(p["chute"], "terracotta"), 548, 820, 60, maxw=480, classe="chute"),
+    ]
+    plan = [{"t": "fleche", "de": [560, 330], "a": [420, 470], "courbe": 0.35, "c": "accent", "ep": 6, "tete": 24,
+             "graine": 27}]
+    return page("H1-02", c, plan, palette="terracotta", fond="papier-creme-2.png")
+
+
+def h1_03():
+    """Annoncer un délai qu'on tient : le calendrier (photo), la date entourée."""
+    p = H1[2]
+    c = [numero(p["numero"], droite=64, haut=60, taille=280),
+         titre_bloc(p["titre"], p["texte"], maxw_titre=800, taille=88, taille_texte=58),
+         decoupe("U29", (720, 590), gauche=180, haut=430, rot=2, dechire=True, contour="#FFFFFF", couleur=TERRA),
+         texte(couleur_soulignes(p["chute"], "terracotta"), 72, 1124, 70, maxw=940, classe="chute")]
+    return page("H1-03", c, [], palette="terracotta", fond="papier-creme-3.png")
+
+
+def h1_04():
+    """Prévenir avant : les mains qui écrivent le message (photo), une bulle « … » à la main."""
+    p = H1[3]
+    c = [numero(p["numero"], droite=64, haut=60, taille=280),
+         titre_bloc(p["titre"], p["texte"], maxw_titre=780, taille=88, taille_texte=52, maxw_texte=900),
+         decoupe("U30", (740, 560), gauche=150, haut=450, rot=-1.5, dechire=True, contour="#FFFFFF", couleur=TERRA),
+         texte(couleur_soulignes(p["chute"], "terracotta"), 72, 1126, 76, maxw=940, classe="chute")]
+    plan = [{"t": "bulleVide", "cx": 800, "cy": 560, "w": 190, "h": 106, "queue": [730, 650], "c": "accent",
+             "points": True, "remplir": "creme", "graine": 912}]
+    return page("H1-04", c, plan, palette="terracotta", fond="papier-creme-4.png")
+
+
 def h1_05():
-    """Chaque matin : le café et le carnet (photo) ; la liste du lendemain cochée, dessinée sur la couverture."""
+    """Chaque matin : le café et le carnet (photo, plus grande) ; la liste du lendemain cochée sur la couverture."""
     p = H1[4]
-    boite, gauche, haut = (680, 452), 190, 560
+    boite, gauche, haut = (840, 560), 80, 450
     im = Image.open(ASSETS / "decoupes" / "U25.jpg")
     r = min(boite[0] / im.width, boite[1] / im.height)
-    x0, y0, x1, y1 = __import__("json").loads((ASSETS / "decoupes" / "reperes_s03h.json").read_text())["U25"]["carnet"]
+    x0, y0, x1, y1 = json.loads((ASSETS / "decoupes" / "reperes_s03h.json").read_text())["U25"]["carnet"]
     cx0, cy0, cx1, cy1 = (gauche + PAD + x0 * r, haut + PAD + y0 * r, gauche + PAD + x1 * r, haut + PAD + y1 * r)
     c = [numero(p["numero"], droite=64, haut=60, taille=280),
-         titre_bloc(p["titre"], p["texte"], maxw_titre=760, taille=88, taille_texte=54, maxw_texte=900),
+         titre_bloc(p["titre"], p["texte"], maxw_titre=760, taille=88, taille_texte=52, maxw_texte=900),
          decoupe("U25", boite, gauche=gauche, haut=haut, dechire=True, contour="#FFFFFF", couleur=TERRA),
-         texte(couleur_soulignes(p["chute"], "terracotta"), 72, 1110, 74, maxw=940, classe="chute")]
+         texte(couleur_soulignes(p["chute"], "terracotta"), 72, 1124, 70, maxw=940, classe="chute")]
     lw, lh = cx1 - cx0, cy1 - cy0
-    plan = [
-        {"t": "ecriture", "boite": [round(cx0 + lw * 0.14), round(cy0 + lh * 0.22), round(lw * 0.72), round(lh * 0.6)],
-         "lignes": 4, "coches": [0, 1, 2, 3], "c": "encre", "ep": 4, "graine": 81, "rot": -2},
-    ]
+    plan = [{"t": "ecriture", "boite": [round(cx0 + lw * 0.14), round(cy0 + lh * 0.22), round(lw * 0.72), round(lh * 0.6)],
+             "lignes": 4, "coches": [0, 1, 2, 3], "c": "encre", "ep": 4, "graine": 81, "rot": -2}]
     return page("H1-05", c, plan, palette="terracotta", fond="papier-creme-1.png")
 
 
 def h1_06():
-    """La solution en trois lignes, chacune avec son image : le tournevis (photo) et les lunettes réglées,
-    l'étui de la paire de prêt, l'agenda du rendez-vous."""
+    """La solution : la main qui rend les lunettes (photo) et le tournevis ; les trois réponses en liste."""
     p = H1[5]
-    l1, l2, l3 = p["liste"]
+    lignes = "".join(f'<div style="margin-bottom:22px"><span style="color:#C06B3E;font-weight:800">—</span>\u00a0{md(l)}</div>'
+                     for l in p["liste"])
+    liste = (f'<div class="bloc" style="left:64px;top:968px;max-width:960px"><div class="texte" '
+             f'style="font-size:50px;font-weight:600;line-height:1.15">{lignes}</div></div>')
     c = [numero(p["numero"], droite=64, haut=60, taille=280),
          titre_bloc(p["titre"], maxw_titre=780, taille=88),
-         texte(l1, 330, 460, 60, maxw=690, poids="600"),
-         texte(l2, 330, 760, 60, maxw=690, poids="600"),
-         texte(l3, 330, 1000, 60, maxw=690, poids="600"),
-         decoupe("U26", (320, 72), gauche=6, haut=540, rot=-7, dechire=True, contour="#FFFFFF", couleur=TERRA)]
-    plan = [
-        {"t": "lunettes", "cx": 165, "cy": 490, "r": 46, "rot": -4, "c": "encre", "ep": 6, "graine": 461},
-        {"t": "etui", "x": 75, "y": 812, "w": 190, "h": 78, "rot": -3, "graine": 102},
-        {"t": "presse", "x": 105, "y": 1010, "w": 130, "h": 160, "rot": -5, "graine": 93},
-    ]
-    return page("H1-06", c, plan, palette="terracotta", fond="papier-creme-2.png")
+         decoupe("U31", (590, 520), gauche=40, haut=330, rot=-2, dechire=True, contour="#FFFFFF", couleur=TERRA),
+         decoupe("U26", (340, 76), gauche=600, haut=820, rot=-9, dechire=True, contour="#FFFFFF", couleur=TERRA,
+                 devant=True),
+         liste]
+    return page("H1-06", c, [], palette="terracotta", fond="papier-creme-2.png")
 
 
 def h1_07():
