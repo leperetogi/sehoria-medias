@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Mise en page du hors-série S03h (lundi 19/10) : une fonction par page. Les mots viennent de semaine03h.py.
-Page 1 en style affiche (fond encre, « 9 ANS » géant derrière la voiture bâchée, terracotta seule couleur vive) ;
-pages 2 à 7 en collage violet + terracotta."""
+Page 1 « le parallèle » (version 3) ; pages 2 à 7 en collage violet + terracotta, une photo de mise en situation par page."""
 import hashlib
 import json
 
@@ -133,21 +132,34 @@ def page_cta(ident, palette, fond, souligne, ligne1=CTA_MARQUE_1, ligne2=CTA_MAR
 PAD = 14 + 11 + 13 + 6  # marge ajoutée par le sticker (contour blanc + contour décalé)
 
 
+# Page 1, version 3 (17/10 au soir, Togi : « la première page non… repensée de zéro ») : « le parallèle ».
+# En haut, la nuit : la voiture de sport sous sa bâche, le libellé d'actualité, « 9 ANS » et les trois phrases.
+# En bas, le papier crème du magasin : la paire prête dans son étui et la chute. Mêmes mots qu'en version 1 et 2.
+BANDE_H1 = "H1-bande.png"          # généré par preparer_s03h.bande_h1 à partir de la photo choisie par Togi
+LUNETTES_H1 = "U32"                # paire de lunettes dans son étui
+
+
 def h1_01():
-    """Affiche pleine page : la voiture sous sa housse (photo en bichromie encre / crème), le libellé d'actualité
-    (« ACTU · TESLA · 15/10 », accord de Togi), « 9 ANS » géant au-dessus, le buzz dit en trois lignes, la chute à la main."""
     p = H1[0]
-    libelle = ('<div class="bloc" style="left:60px;top:58px;z-index:30"><div class="mono" style="font-size:30px;'
+    bande = ASSETS / "decoupes" / BANDE_H1
+    if not bande.exists():
+        bande = ASSETS / "decoupes" / "H1-bande-essai.png"
+    lunettes = LUNETTES_H1 if any((ASSETS / "decoupes").glob(LUNETTES_H1 + ".*")) else "U31"
+    hb = Image.open(bande).height
+    libelle = ('<div class="bloc" style="left:58px;top:54px;z-index:30"><div class="mono" style="font-size:34px;'
                'background:#C06B3E;color:#FBF5EF;opacity:1;padding:.34em .72em .3em;letter-spacing:.16em;'
                f'box-shadow:6px 6px 0 #0E0B18">{md(p["libelle"])}</div></div>')
     c = [
+        f'<img class="bande-photo" alt="" src="{url(bande)}" style="position:absolute;left:0;top:0;width:1080px;'
+        f'height:{hb}px;z-index:2">',
         libelle,
-        geant([(p["geant"].upper(), 300)], 46, 128, z=6),
-        texte(une_phrase_par_ligne(p["bandeau"]), 56, 958, 46, maxw=980, classe="affiche-texte"),
-        main(couleur_soulignes(p["main"], "terracotta"), 56, 1118, 60, r=-2, maxw=980),
-        mono("01/07", 60, 1272, 28),
+        geant([(p["geant"].upper(), 290)], 44, 146, z=6),
+        texte(une_phrase_par_ligne(p["bandeau"]), 58, 628, 42, maxw=980, classe="affiche-texte"),
+        decoupe(lunettes, (370, 320), droite=44, haut=858, rot=4, contour="#FFFFFF", couleur=TERRA),
+        texte(couleur_soulignes(p["main"], "terracotta"), 58, 884, 78, maxw=560, classe="chute"),
+        mono("01/07", 60, 1272, 28, couleur="#6E6782"),
     ]
-    return page("H1-01", c, [fleche_defiler(900, 1292)], palette="affiche", fond="decoupes/H1-fond.jpg", grille=False)
+    return page("H1-01", c, [fleche_defiler(900, 1292)], palette="terracotta", fond="papier-creme-2.png")
 
 
 def h1_02():
