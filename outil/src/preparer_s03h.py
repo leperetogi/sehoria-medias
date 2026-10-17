@@ -114,8 +114,14 @@ def bande_h1(src, recadrage, nom="H1-bande.png", hauteur=800, effacer=(), haut_s
     g = np.clip(g * (1 - haut) * (1 - bas) * vign, 0, 1)[..., None]
     rgb = np.array(ENCRE, np.float32) * (1 - g) + np.array(CREME, np.float32) * g
     rgb += np.random.default_rng(7).normal(0, 4.0, rgb.shape[:2] + (1,)).astype(np.float32)
-    # bord déchiré : la photo s'arrête sur une ligne irrégulière, un liseré de papier blanc (le cœur du papier
-    # déchiré) dépasse dessous, puis une ombre douce tombe sur la page. L'image fait hauteur + 40 px.
+    H = dechirer_bas(rgb, hauteur, nom)
+    return {"taille": [1080, H], "source": src, "recadrage": list(recadrage)}
+
+
+def dechirer_bas(rgb, hauteur, nom):
+    """Bord inférieur déchiré : la photo s'arrête sur une ligne irrégulière, un liseré de papier blanc (le cœur du
+    papier déchiré) dépasse dessous, puis une ombre douce tombe sur la page. rgb : tableau float (hauteur, 1080, 3).
+    Écrit OUT/nom (PNG avec transparence, hauteur + 40 px) ; renvoie la hauteur de l'image."""
     import cv2 as _cv2
     H = hauteur + 40
     rng = np.random.default_rng(11)
@@ -143,7 +149,26 @@ def bande_h1(src, recadrage, nom="H1-bande.png", hauteur=800, effacer=(), haut_s
     alpha = a_papier + ombre * (1 - a_papier)
     res = np.dstack([np.clip(col, 0, 255), np.clip(alpha, 0, 1) * 255]).astype(np.uint8)
     Image.fromarray(res, "RGBA").save(OUT / nom)
-    return {"taille": [1080, H], "source": src, "recadrage": list(recadrage)}
+    return H
+
+
+def rampe_h1(rendu="R1-rampe", nom="H1-piste.png", hauteur=1010, contraste=1.15, gamma=0.95, liseres=1.0):
+    """Page 1, version 4 : la rampe 3D vide (rendue par rampe3d.py, aucune image tierce), passée dans la bichromie
+    encre / crème des autres pages, liserés lumineux teintés terracotta (seule couleur vive), grain, bord déchiré."""
+    im = Image.open(SRC / f"{rendu}.png").convert("RGB").resize((1080, hauteur), Image.LANCZOS)
+    mq = Image.open(SRC / f"{rendu}-masque.png").convert("L").resize((1080, hauteur), Image.LANCZOS)
+    a = np.asarray(im).astype(np.float32) / 255.0
+    g = 0.2126 * a[..., 0] + 0.7152 * a[..., 1] + 0.0722 * a[..., 2]
+    g = np.clip((g - 0.5) * contraste + 0.5, 0, 1) ** gamma
+    m = np.clip(np.asarray(mq).astype(np.float32) / 255.0 * 1.6 * liseres, 0, 1)[..., None]
+    g = g[..., None]
+    rgb = np.array(ENCRE, np.float32) * (1 - g) + np.array(CREME, np.float32) * g
+    terra = np.array((192, 107, 62), np.float32)
+    coeur = np.clip((m - 0.75) / 0.25, 0, 1)                       # le cœur du liseré reste clair, le halo est terracotta
+    rgb = rgb * (1 - m) + (terra * (1 - coeur) + np.array((255, 214, 190), np.float32) * coeur) * m
+    rgb += np.random.default_rng(13).normal(0, 4.5, rgb.shape[:2] + (1,)).astype(np.float32)
+    H = dechirer_bas(rgb, hauteur, nom)
+    return {"taille": [1080, H], "source": f"{rendu} (rendu 3D, gabarit/rampe3d.html)"}
 
 
 def recadrer_photo(src, boite, nom):
@@ -158,7 +183,7 @@ if __name__ == "__main__":
     fichier = OUT / "reperes_s03h.json"
     reperes = json.loads(fichier.read_text()) if fichier.exists() else {}
     for code, f in {"U24": voiture_bachee, "U25": cafe, "U26": tournevis, "H1": fond_h1, "U28": porte,
-                    "U29": calendrier, "U30": message, "U31": lunettes_main}.items():
+                    "U29": calendrier, "U30": message, "U31": lunettes_main, "H1piste": rampe_h1}.items():
         if not sys.argv[1:] or code in sys.argv[1:]:
             reperes[code] = f()
     fichier.write_text(json.dumps(reperes, indent=1), encoding="utf-8")

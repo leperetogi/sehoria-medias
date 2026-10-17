@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Rampe 3D</title>
+<!-- Hors-série S03h, page 1 : une rampe de démonstration vide, construite ici (aucune image ni modèle tiers).
+     Rendu par src/rampe3d.py (Playwright) ; paramètres dans l'URL : mode=photo|masque, l, h, et la caméra. -->
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { Reflector } from 'three/addons/objects/Reflector.js';
+
+const q = new URLSearchParams(location.search);
+const num = (k, d) => (q.has(k) ? parseFloat(q.get(k)) : d);
+const W = num('l', 1080), H = num('h', 1350);
+const MODE = q.get('mode') || 'photo';
+const CAM = [num('cx', 26), num('cy', 3.2), num('cz', 20)];
+const VISE = [num('vx', 0), num('vy', 8.5), num('vz', -4)];
+const FOV = num('fov', 46);
+
+// ---------- profil de la rampe : plat, quart de cercle, puis mur vertical ----------
+const R = num('rayon', 13), HV = num('haut_mur', 5), LF = num('plat', 30), LARG = num('largeur', 5.2), EP = 0.45;
+const L_ARC = Math.PI * R / 2, L_TOT = LF + L_ARC + HV;
+function profil(s) {                 // s : abscisse curviligne depuis le bout du plat → {z, y, nz, ny}
+  if (s <= LF) return { z: LF - s, y: 0, nz: 0, ny: 1 };
+  if (s <= LF + L_ARC) {
+    const t = (s - LF) / R;            // angle
+    return { z: -R * Math.sin(t), y: R - R * Math.cos(t), nz: Math.sin(t), ny: Math.cos(t) };
+  }
+  const v = s - LF - L_ARC;
+  return { z: -R, y: R + v, nz: 1, ny: 0 };
+}
+const echantillons = [];
+for (let i = 0; i <= 40; i++) echantillons.push(LF * i / 40);
+for (let i = 1; i <= 120; i++) echantillons.push(LF + L_ARC * i / 120);
+for (let i = 1; i <= 16; i++) echantillons.push(LF + L_ARC + HV * i / 16);
+
+// ---------- texture béton (procédurale) ----------
+function bruit(w, h, graine) {
+  let s = graine; const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'); const d = g.createImageData(w, h);
+  // bruit de valeur à plusieurs octaves, calculé sur une grille grossière puis lissé par le navigateur
+  for (let i = 0; i < w * h; i++) { const v = 150 + (r() - 0.5) * 34; d.data[4*i] = d.data[4*i+1] = d.data[4*i+2] = v; d.data[4*i+3] = 255; }
+  g.putImageData(d, 0, 0); return c;
+}
+function texture_beton() {
+  const w = 512, h = 4096, c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  g.fillStyle = '#9b9a97'; g.fillRect(0, 0, w, h);
+  for (const [taille, alpha, graine] of [[8, .55, 7], [32, .35, 11], [128, .25, 3]]) {
+    const b = bruit(Math.ceil(w / taille), Math.ceil(h / taille), graine);
+    g.globalAlpha = alpha; g.imageSmoothingEnabled = true; g.drawImage(b, 0, 0, w, h);
+  }
+  g.globalAlpha = 1;
+  // taches et coulures légères
+  let s = 99; const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 260; i++) {
+    const x = r() * w, y = r() * h, rr = 6 + r() * 40;
+    const gr = g.createRadialGradient(x, y, 0, x, y, rr);
+    gr.addColorStop(0, `rgba(60,60,60,${0.05 + r() * 0.08})`); gr.addColorStop(1, 'rgba(60,60,60,0)');
+    g.fillStyle = gr; g.fillRect(x - rr, y - rr, 2 * rr, 2 * rr);
+  }
+  // joints des dalles, tous les 3 m
+  const pxm = h / L_TOT;
+  g.strokeStyle = 'rgba(40,40,40,.55)'; g.lineWidth = 2;
+  for (let m = 3; m < L_TOT; m += 3) { g.beginPath(); g.moveTo(0, h - m * pxm); g.lineTo(w, h - m * pxm); g.stroke(); }
+  // ligne blanche au centre, continue, un peu usée
+  g.fillStyle = 'rgba(245,244,238,.92)'; g.fillRect(w / 2 - 7, 0, 14, h);
+  for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(150,150,150,${r() * .5})`; g.fillRect(w / 2 - 7 + r() * 14, r() * h, 2, 2 + r() * 6); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16;
+  return t;
+}
+
+// ---------- scène ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(W, H);
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = num('expo', 1.0);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x030305);
+scene.fog = new THREE.FogExp2(0x050508, num('brume', 0.012));
+const camera = new THREE.PerspectiveCamera(FOV, W / H, 0.1, 600);
+camera.position.set(...CAM); camera.lookAt(...VISE);
+
+const masque = MODE === 'masque';
+const NOIR = new THREE.MeshBasicMaterial({ color: 0x000000 });
+
+// rampe : face roulante, dessous, deux chants
+const beton = masque ? NOIR : new THREE.MeshStandardMaterial({ map: texture_beton(), roughness: 0.82, metalness: 0.0 });
+const flanc = masque ? NOIR : new THREE.MeshStandardMaterial({ color: 0x7d7c79, roughness: 0.9 });
+function surface(decal, faceVersLeHaut) {
+  const nx = 8, ns = echantillons.length, pos = [], uv = [], idx = [];
+  for (let j = 0; j < ns; j++) {
+    const p = profil(echantillons[j]);
+    for (let i = 0; i <= nx; i++) {
+      const x = -LARG / 2 + LARG * i / nx;
+      pos.push(x, p.y - p.ny * decal, p.z - p.nz * decal);
+      uv.push(i / nx, echantillons[j] / L_TOT);
+    }
+  }
+  for (let j = 0; j < ns - 1; j++) for (let i = 0; i < nx; i++) {
+    const a = j * (nx + 1) + i, b = a + 1, c = a + nx + 1, d = c + 1;
+    if (faceVersLeHaut) idx.push(a, b, c, b, d, c); else idx.push(a, c, b, b, c, d);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx); g.computeVertexNormals(); return g;
+}
+const dessus = new THREE.Mesh(surface(0, true), beton); dessus.castShadow = dessus.receiveShadow = true; scene.add(dessus);
+const dessous = new THREE.Mesh(surface(EP, false), flanc); dessous.castShadow = true; scene.add(dessous);
+for (const cote of [-1, 1]) {           // chants (épaisseur de la dalle)
+  const pos = [], idx = [];
+  echantillons.forEach((s, j) => { const p = profil(s); const x = cote * LARG / 2;
+    pos.push(x, p.y, p.z, x, p.y - p.ny * EP, p.z - p.nz * EP); });
+  for (let j = 0; j < echantillons.length - 1; j++) { const a = 2 * j; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx); g.computeVertexNormals();
+  const m = new THREE.Mesh(g, masque ? NOIR : new THREE.MeshStandardMaterial({ color: 0x6f6e6b, roughness: 0.9, side: THREE.DoubleSide }));
+  m.castShadow = true; scene.add(m);
+}
+
+// liserés lumineux le long des deux bords (deviennent terracotta au tirage)
+const lumiere = new THREE.MeshBasicMaterial({ color: masque ? 0xffffff : 0xffe2d0, toneMapped: false });
+for (const cote of [-1, 1]) {
+  const pts = echantillons.filter((_, k) => k % 2 === 0).map(s => { const p = profil(s);
+    return new THREE.Vector3(cote * (LARG / 2 - 0.06), p.y + p.ny * 0.06, p.z + p.nz * 0.06); });
+  const tube = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 400, 0.055, 8, false), lumiere);
+  scene.add(tube);
+}
+
+// charpente métallique derrière la partie courbe et le mur : membrures, montants, diagonales, pieds
+const acier = masque ? NOIR : new THREE.MeshStandardMaterial({ color: 0x5b6066, roughness: 0.38, metalness: 0.85 });
+function barre(a, b, r) {
+  const d = new THREE.Vector3().subVectors(b, a), long = d.length();
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, long, 8), acier);
+  m.position.copy(a).addScaledVector(d, 0.5);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+  m.castShadow = true; scene.add(m);
+}
+const PROF = num('prof_charpente', 2.6);
+const noeuds = [];
+for (let s = LF + 1.2; s <= L_TOT + 0.01; s += 1.9) noeuds.push(Math.min(s, L_TOT));
+for (const cote of [-1, 1]) {
+  const x = cote * (LARG / 2 - 0.25);
+  const int = [], ext = [];
+  for (const s of noeuds) { const p = profil(s);
+    int.push(new THREE.Vector3(x, p.y - p.ny * (EP + 0.1), p.z - p.nz * (EP + 0.1)));
+    ext.push(new THREE.Vector3(x, p.y - p.ny * (EP + PROF), p.z - p.nz * (EP + PROF))); }
+  for (let k = 0; k < noeuds.length; k++) {
+    barre(int[k], ext[k], 0.07);                                   // montant
+    if (k < noeuds.length - 1) {
+      barre(ext[k], ext[k + 1], 0.11); barre(int[k], int[k + 1], 0.09);   // membrures
+      barre(k % 2 ? int[k] : ext[k], k % 2 ? ext[k + 1] : int[k + 1], 0.06);  // diagonale
+    }
+    // pieds : des noeuds extérieurs jusqu'au sol, avec une traverse
+    if (ext[k].y > 0.5 && k % 2 === 0) {
+      const sol = new THREE.Vector3(ext[k].x, 0, ext[k].z - 0.2 * (k / noeuds.length));
+      barre(ext[k], sol, 0.1);
+    }
+  }
+}
+// entretoises entre les deux poutres
+for (const s of noeuds) { const p = profil(s);
+  for (const prof of [EP + 0.1, EP + PROF]) {
+    const a = new THREE.Vector3(-(LARG / 2 - 0.25), p.y - p.ny * prof, p.z - p.nz * prof);
+    const b = new THREE.Vector3(LARG / 2 - 0.25, p.y - p.ny * prof, p.z - p.nz * prof);
+    barre(a, b, 0.06);
+  } }
+// tour arrière : quatre poteaux montant jusqu'en haut du mur, contreventés
+{
+  const zt = -R - EP - PROF - 3.2, ht = R + HV + 0.6;
+  const coins = [[-LARG / 2, zt], [LARG / 2, zt], [-LARG / 2, zt - 3], [LARG / 2, zt - 3]];
+  for (const [x, z] of coins) barre(new THREE.Vector3(x, 0, z), new THREE.Vector3(x, ht, z), 0.13);
+  for (let y = 1.5; y < ht; y += 2.4) {
+    barre(new THREE.Vector3(-LARG / 2, y, zt), new THREE.Vector3(LARG / 2, y, zt), 0.06);
+    barre(new THREE.Vector3(-LARG / 2, y, zt - 3), new THREE.Vector3(LARG / 2, y, zt - 3), 0.06);
+    for (const x of [-LARG / 2, LARG / 2]) {
+      barre(new THREE.Vector3(x, y, zt), new THREE.Vector3(x, y + 2.4, zt - 3), 0.05);
+      barre(new THREE.Vector3(x, y, zt), new THREE.Vector3(x, y, -R - EP - PROF), 0.06);
+    }
+  }
+}
+
+// sol mouillé : un miroir, voilé par une dalle sombre semi-transparente (reflets doux de la rampe et des liserés)
+const miroir = new Reflector(new THREE.PlaneGeometry(600, 600), { clipBias: 0.003, textureWidth: W, textureHeight: H,
+  color: new THREE.Color(num('reflet', 0.55), num('reflet', 0.55), num('reflet', 0.55)) });
+miroir.rotation.x = -Math.PI / 2; miroir.position.y = -0.03; scene.add(miroir);
+const sol = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), masque
+  ? new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: num('voile', 0.8) })
+  : new THREE.MeshStandardMaterial({ color: 0x141416, roughness: 0.5, metalness: 0.1, transparent: true, opacity: num('voile', 0.8) }));
+sol.rotation.x = -Math.PI / 2; sol.receiveShadow = true; scene.add(sol);
+
+// éclairage de scène : très peu d'ambiance, des projecteurs
+scene.add(new THREE.AmbientLight(0xffffff, masque ? 0 : num('ambiance', 0.06)));
+function projecteur(pos, cible, intens, angle, ombre) {
+  const l = new THREE.SpotLight(0xffffff, intens, 0, angle, 0.55, 0);
+  l.position.set(...pos); l.target.position.set(...cible); scene.add(l, l.target);
+  if (ombre) { l.castShadow = true; l.shadow.mapSize.set(2048, 2048); l.shadow.bias = -0.0004; }
+  return l;
+}
+if (!masque) {
+  projecteur([num('px', 14), num('py', 34), num('pz', 30)], [0, 7, -8], num('pi', 2.6), 0.42, true);   // principal
+  projecteur([-18, 30, 18], [0, 12, -12], 1.0, 0.32, false);                                         // contre
+  projecteur([4, 22, 34], [0, 0, 8], num('pi_plat', 1.4), 0.5, false);                                // plat et sol
+  projecteur([10, 4, -30], [0, 10, -14], 2.2, 0.35, false);                                            // contre-jour charpente
+  projecteur([6, 26, 6], [-2, 0, -6], num('pi_pied', 1.6), 0.38, false);                               // flaque au pied de la rampe
+}
+
+// faisceaux visibles dans la brume (cônes additifs)
+function faisceau(haut, bas, rayon, opa) {
+  const c = document.createElement('canvas'); c.width = 4; c.height = 256; const g = c.getContext('2d');
+  const gr = g.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 4, 256);
+  const a = new THREE.Vector3(...haut), b = new THREE.Vector3(...bas), d = new THREE.Vector3().subVectors(b, a), long = d.length();
+  const geo = new THREE.CylinderGeometry(0.25, rayon, long, 48, 1, true);
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending, uniforms: { opa: { value: opa } },
+    vertexShader: `varying vec2 vUv; varying vec3 vN; varying vec3 vV;
+      void main(){ vUv = uv; vec4 mv = modelViewMatrix * vec4(position, 1.0); vV = normalize(-mv.xyz);
+      vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `uniform float opa; varying vec2 vUv; varying vec3 vN; varying vec3 vV;
+      void main(){ float f = pow(abs(dot(normalize(vN), normalize(vV))), 2.5); float g = pow(vUv.y, 1.3);
+      gl_FragColor = vec4(vec3(1.0), opa * f * g); }` });
+  const m = new THREE.Mesh(geo, mat);
+  m.position.copy(a).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), d.clone().normalize());
+  scene.add(m);
+}
+if (!masque && num('faisceaux', 1)) {
+  const fo = num('faisceaux', 1) * 0.16;
+  faisceau([-40, 60, -60], [-22, 0, -10], 7, fo);
+  faisceau([-30, 60, -70], [-6, 0, -26], 6, fo * 0.9);
+  faisceau([-55, 60, -40], [-30, 0, 4], 8, fo * 0.7);
+  faisceau([20, 60, -80], [8, 0, -34], 6, fo * 0.8);
+}
+
+// rendu avec halo sur les liserés
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(W, H), masque ? num('halo_masque', 0.45) : num('halo', 0.6), 0.5, 0.82));
+composer.addPass(new OutputPass());
+composer.render();
+window.__fini = true;
+</script>
+</body></html>

@@ -148,8 +148,8 @@ def h1_01():
     c = [
         f'<img class="bande-photo" alt="" src="{url(bande)}" style="position:absolute;left:0;top:0;width:1080px;'
         f'height:{hb}px;z-index:2">',
-        geant([(p["geant"].upper(), 440)], 40, 66, z=6),
-        texte(p["sous_titre"], 52, 452, 64, maxw=980, classe="affiche-texte"),
+        geant([(p["geant"].upper(), 360)], 40, 70, z=6),
+        texte(p["sous_titre"], 50, 392, 64, maxw=760, classe="affiche-texte"),
         texte(couleur_soulignes(p["chute"], "terracotta"), 58, 1036, 80, maxw=980, classe="chute"),
         mono("01/07", 60, 1272, 28, couleur="#6E6782"),
     ]
