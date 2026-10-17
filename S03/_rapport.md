@@ -14,3 +14,5 @@
 - U21-liege ok — 2400 × 1600, 580 Ko — https://images.unsplash.com/photo-1577401159468-3bbc7ee440b5?ixid=M3wxMDE3MjIwfDB8MXxzZWFyY2h8NHx8Y29yayUyMGJvYXJkJTIwcGlubmVkJTIwcGFwZXJ8ZW58MHx8fHwxNzkxODI2Nzg3fDI&ixlib=rb-4.1.0
 - U22-table ok — 1759 × 2400, 518 Ko — https://images.unsplash.com/photo-1755719401891-327552d72892?ixid=M3wxMDE3MjIwfDB8MXxzZWFyY2h8Nnx8ZXllZ2xhc3NlcyUyMGNhc2V8ZW58MHx8fHwxNzkxODI2Nzg1fDI&ixlib=rb-4.1.0
 - U23-vitrine ok — 2400 × 1230, 600 Ko — https://images.unsplash.com/photo-1759910546772-73e4bb7fdadd?ixid=M3wxMDE3MjIwfDB8MXxzZWFyY2h8NHx8ZXllZ2xhc3NlcyUyMGNhc2V8ZW58MHx8fHwxNzkxODI2Nzg1fDI&ixlib=rb-4.1.0
+- U24-bache ok — 1600 × 2400, 1374 Ko — https://images.unsplash.com/photo-1642270211149-c3b2781a9e5e?ixid=M3wxMDE3MjIwfDB8MXxzZWFyY2h8Mnx8Y292ZXJlZCUyMGNhcnxlbnwwfHx8fDE3OTIyMzg3NTN8Mg&ixlib=rb-4.1.0
+- U24b-bache ok — 1600 × 2400, 1337 Ko — https://images.unsplash.com/photo-1688149946226-ec9de611d9e5?ixid=M3wxMDE3MjIwfDB8MXxzZWFyY2h8MTF8fGNvdmVyZWQlMjBjYXJ8ZW58MHx8fHwxNzkyMjM4NzUzfDI&ixlib=rb-4.1.0
