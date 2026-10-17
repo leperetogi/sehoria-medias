@@ -9,9 +9,9 @@ Balisage : [[mot]] souligné à la main · {{mot}} surligné · ~ espace inséca
 
 SEMAINE = "03h"
 
-# Exception au §6 décidée par Togi le 17/10 à 15 h 06 : le nom de la marque paraît une fois, dans le libellé
-# d'actualité de la page 1, écrit en texte simple (ni logo, ni image, ni photo officielle : refusées).
-EXCEPTIONS_MARQUES = {"tesla"}
+# Exception au §6 accordée par Togi le 17/10 à 15 h 06 (« Tesla » dans le libellé de la page 1), devenue inutile à
+# 20 h 17 : Togi a fait retirer le libellé. Plus aucun nom de marque, le contrôle §6 s'applique en entier.
+EXCEPTIONS_MARQUES = set()
 
 # Photos (téléchargées par GitHub — photos.py 03)
 PHOTOS = {
@@ -54,9 +54,9 @@ PUBLICATIONS = [
         "id": "S03-H1", "format": "A", "pilier": "Les astuces (le délai des lunettes)", "slug": "delai-tenu",
         "titre": "Un délai qu’on tient", "palette": "terracotta",
         "pages": [
-            {"type": "accroche", "photo": "U27", "geant": "9 ans", "libelle": "Actu · Tesla · 15/10",
-             "bandeau": "Une voiture promise il y a près de neuf ans. Enfin montrée. Fabriquée dans deux ans.",
-             "main": "Votre client, lui, attend ses lunettes [[jeudi.]]"},
+            # Version 4 (17/10, 20 h 17, Togi : « trop d'écriture », libellé « Actu · Tesla » retiré) : 12 mots.
+            {"type": "accroche", "photo": "U32", "geant": "9 ans", "sous_titre": "pour une voiture.",
+             "chute": "Votre client, lui, attend ses lunettes [[jeudi.]]"},
             {"type": "probleme",
              "citation1": "«~Elles sont prêtes, mes lunettes~?~»", "citation2": "«~Ah… pas encore.~»",
              "texte": "Le client a fait le trajet pour rien.",
