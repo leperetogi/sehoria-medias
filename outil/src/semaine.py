@@ -2,6 +2,7 @@
 """Rendu final de la semaine : une publication = un dossier (PNG par page + PDF), contrôles, légendes."""
 import importlib
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -12,7 +13,7 @@ from controle import verifier, normaliser
 
 # usage : python3 src/semaine.py NN [S0N-A1 …]   (NN = numéro de semaine ; par défaut la dernière)
 _args = sys.argv[1:]
-_num = _args.pop(0) if _args and _args[0].isdigit() else "02"
+_num = _args.pop(0) if _args and re.match(r"^\d+[a-z]?$", _args[0]) else "02"   # « 03h » : hors-série
 _txt = importlib.import_module(f"semaine{_num}")
 PUBLICATIONS, SEMAINE = _txt.PUBLICATIONS, _txt.SEMAINE
 PUBLICATIONS_MEP = importlib.import_module(f"mep_s{_num}").PUBLICATIONS_MEP

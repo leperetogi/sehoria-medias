@@ -563,8 +563,46 @@
     svg.appendChild(g);
   }
 
+  /* traînée de fumée (hors-série S03h) : bouffées qui grossissent le long d'une courbe de Bézier quadratique */
+  function fumee(rc, svg, o, page) {
+    const g = document.createElementNS(NS, "g"), rnd = aleat(o.graine || 1201);
+    const [x1, y1] = o.de, [cx, cy] = o.ctrl, [x2, y2] = o.a, n = o.n || 14;
+    const c = couleur(page, o.c || "creme");
+    for (let i = 0; i < n; i++) {
+      const t = i / (n - 1), a = (1 - t) * (1 - t), b = 2 * (1 - t) * t, d = t * t;
+      const x = a * x1 + b * cx + d * x2 + (rnd() - 0.5) * 10, y = a * y1 + b * cy + d * y2 + (rnd() - 0.5) * 10;
+      const r = (o.r0 || 12) + ((o.r1 || 60) - (o.r0 || 12)) * Math.pow(t, 0.8) * (0.85 + rnd() * 0.3);
+      g.appendChild(rc.circle(x, y, 2 * r, { stroke: c, strokeWidth: o.ep || 3, roughness: 1.6, bowing: 1.2,
+        fill: c, fillStyle: "hachure", hachureGap: o.trame || 7, hachureAngle: -30 + rnd() * 60, fillWeight: 2.2,
+        seed: (o.graine || 1201) + i }));
+    }
+    g.setAttribute("opacity", o.opacite || 0.9);
+    svg.appendChild(g);
+  }
+
+  /* rampe courbe dressée (hors-série S03h) : un ruban qui monte en se courbant, bords soulignés, échafaudage derrière */
+  function rampe(rc, svg, o, page) {
+    const g = document.createElementNS(NS, "g"), { x, y, w, h } = o, k = o.courbe || 160;
+    const bord = couleur(page, o.bord || "accent"), ligne = couleur(page, o.c || "creme");
+    const opt = { stroke: ligne, strokeWidth: o.ep || 4, roughness: 0.9, bowing: 0.6, seed: o.graine || 1301 };
+    const cote = (dx) => { const pts = []; for (let t = 0; t <= 1.0001; t += 0.05) {
+      pts.push([x + dx - k * Math.sin(t * Math.PI / 2) * 0.9 + k * 0.1 * t, y - h * t]); } return pts; };
+    const gauche = cote(0), droite = cote(w);
+    for (let i = 0; i < gauche.length - 1; i += 2) {   // échafaudage : croisillons côté droit
+      const [ax, ay] = droite[i], [bx, by] = droite[i + 2] || droite[i + 1];
+      g.appendChild(rc.line(ax, ay, bx + 70, by, { ...opt, stroke: "#8E88A3", strokeWidth: 2.5, seed: opt.seed + 40 + i }));
+      g.appendChild(rc.line(ax + 70, ay, bx, by, { ...opt, stroke: "#8E88A3", strokeWidth: 2.5, seed: opt.seed + 80 + i }));
+    }
+    g.appendChild(rc.curve(droite.map(([px, py]) => [px + 70, py]), { ...opt, stroke: "#8E88A3", strokeWidth: 3, seed: opt.seed + 3 }));
+    g.appendChild(rc.polygon([...gauche, ...droite.slice().reverse()], { ...opt, stroke: "none", fill: ligne,
+      fillStyle: "hachure", hachureGap: 11, hachureAngle: 60, fillWeight: 1.6, seed: opt.seed + 4 }));
+    g.appendChild(rc.curve(gauche, { ...opt, stroke: bord, strokeWidth: 6, seed: opt.seed + 1 }));
+    g.appendChild(rc.curve(droite, { ...opt, stroke: bord, strokeWidth: 6, seed: opt.seed + 2 }));
+    svg.appendChild(g);
+  }
+
   const PRIMITIVES = { fleche, gribouillis, ellipse, bulle, batons, tableau, icone, ecriture, infini, feutre, presse, etui, coche, manque, croix, montee,
-                       lunettes, soleil, nuage, visage, telephone, bulleVide, chamoisine, cordon };
+                       lunettes, soleil, nuage, visage, telephone, bulleVide, chamoisine, cordon, fumee, rampe };
 
   async function dessiner() {
     await document.fonts.ready;

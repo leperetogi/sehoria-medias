@@ -25,6 +25,8 @@ ENSEIGNES = [
     "essilor", "luxottica", "essilorluxottica", "zeiss", "hoya", "nikon", "rodenstock", "bbgr", "novacel",
     "shamir", "seiko", "ray-ban", "rayban", "oakley", "safilo", "marcolin", "kering", "persol", "lindberg",
     "carrera", "tom ford", "prada", "gucci", "chanel", "dior", "sharpie", "excel", "lyleoo",
+    # hors-série du 17/10 (le buzz d'une voiture) : la marque et son patron ne se nomment pas (§5, §6)
+    "tesla", "roadster", "cybertruck", "spacex", "musk",
 ]
 
 REGLES_GENERALES = [
