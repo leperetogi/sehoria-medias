@@ -89,3 +89,39 @@ sup{font-size:max(.6em, 28px);line-height:0;vertical-align:.55em}
 
 /* ---- repères d'essai (jamais publiés) ---- */
 .essai .page::after{content:"";position:absolute;inset:0;pointer-events:none}
+
+/* ---- S04 : relance à la main (cliffhanger), signet, tampon ---- */
+.relance{font-family:"Gochi Hand",cursive;color:var(--accent);line-height:1;transform:rotate(var(--r,-3deg));white-space:nowrap}
+.signet{position:absolute;z-index:35;top:0;width:66px;height:168px;background:var(--terracotta);
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%);box-shadow:0 6px 10px rgba(0,0,0,.25)}
+.signet::after{content:"";position:absolute;left:9px;right:9px;top:0;bottom:22px;border-left:2px dashed rgba(251,245,239,.55);
+  border-right:2px dashed rgba(251,245,239,.55)}
+.tampon{position:relative;display:inline-block;color:var(--accent);border:6px solid currentColor;border-radius:14px;
+  padding:.18em .5em .2em;transform:rotate(var(--r,-6deg));
+}
+/* manques d'encre : des taches couleur papier posées sur le tampon (un masque CSS doublerait le texte dans le PDF) */
+.tampon::after{content:"";position:absolute;z-index:1;inset:-10px;background:url("../assets/tampon-taches.png") 0 0/300px 300px;pointer-events:none}
+.pal-dossier .bandeau{background:var(--terracotta);color:var(--creme)}
+.tampon::before{content:"";position:absolute;inset:6px;border:2px solid currentColor;border-radius:8px}
+.tampon .entete{font-family:"JetBrains Mono",monospace;font-weight:700;letter-spacing:.14em;text-transform:uppercase;line-height:1.1}
+.tampon .q{font-family:"Fraunces",serif;font-style:italic;font-weight:600;font-variation-settings:"opsz" 72,"SOFT" 50;
+  line-height:1.1;text-wrap:balance;margin-top:.15em;position:relative;z-index:2}
+
+/* ---- S04 : style « dossier » (essai sur A2, inspiré de la référence trouvée par Togi le 20/10 ; rien de copié) :
+   fond encre rayé, fiches crème à double filet, polaroïds en couleur réchauffée, trombone, tampon terracotta ---- */
+.page.pal-dossier{--fond:#26203A;--accent:var(--terracotta);--ombre:#0E0B18;color:var(--creme)}
+.fiche{position:absolute;z-index:15;background:#F7F0E6 url("../assets/papier-creme-2.png") center/cover;
+  box-shadow:0 26px 40px rgba(8,6,16,.5),0 3px 6px rgba(8,6,16,.35);transform:rotate(var(--r,-1.5deg))}
+.fiche::before{content:"";position:absolute;inset:22px;border:3px solid #26203A;pointer-events:none}
+.fiche::after{content:"";position:absolute;inset:31px;border:1.2px solid #26203A;pointer-events:none}
+.fiche .contenu{position:absolute;inset:0;color:var(--encre)}
+.titre-fiche{font-family:"Fraunces",serif;font-weight:600;font-variation-settings:"opsz" 144,"SOFT" 0,"WONK" 0;
+  text-transform:uppercase;letter-spacing:.015em;line-height:1.02;color:var(--encre);text-wrap:balance;font-weight:680}
+.ital{font-family:"Fraunces",serif;font-style:italic;font-weight:400;font-variation-settings:"opsz" 144,"SOFT" 100;
+  color:var(--terracotta);line-height:1.1;text-wrap:balance}
+.corps{font-family:"Fraunces",serif;font-weight:500;font-variation-settings:"opsz" 48,"SOFT" 50;color:var(--encre);
+  line-height:1.18;text-wrap:balance}
+.polaroid img.photo{display:block;width:100%;height:100%;object-fit:cover}
+.trombone{position:absolute;z-index:32;overflow:visible;filter:drop-shadow(2px 4px 3px rgba(0,0,0,.35))}
+.pal-dossier .mono{color:var(--creme)}
+.pal-dossier .relance{color:var(--creme)}
