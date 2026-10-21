@@ -202,14 +202,16 @@ def page_cta(ident, palette, fond, souligne, ligne1=CTA_MARQUE_1, ligne2=CTA_MAR
 # ============ A1 · « C'est trop cher. » (avant / après, violet + crème) ============
 
 def a1_01():
-    """Style affiche : « C'EST TROP CHER. » géant, le David qui détourne la tête (le client qui hésite)."""
+    """Style affiche : « C'EST TROP CHER. » géant ; dessous, le Cri de Munch (domaine public) en trois tons de la charte,
+    morceau de tableau au bord déchiré, posé en biais (choix de Togi du 21/10 : un élément que tout le monde reconnaît)."""
     p = A1[0]
     mots = p["geant"].upper().split()
     c = [
         signet(96),
         mono(p["coin"], 60, 62, 30),
         geant([(" ".join(mots[:2]), 216), (mots[2], 452)], 44, 150, z=6),
-        decoupe_nue("U33", (640, 720), droite=-46, bas=0, z=10),
+        decoupe("U45", (560, 760), droite=26, haut=706, rot=4, dechire=True, garder_couleur=True, contour=CREME,
+                couleur="#0E0B18", z=10),
         texte(couleur_soulignes(p["texte"], "terracotta"), 58, 925, 58, maxw=420, classe="affiche-texte"),
         mono("01/07", 60, 1268, 28),
     ]

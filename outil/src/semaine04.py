@@ -18,7 +18,11 @@ SEMAINE = "04"
 
 # Photos validées par Togi le 21/10 (téléchargées par GitHub — photos.py)
 PHOTOS = {
-    "U33": {"sujet": "Le David de Michel-Ange, tête détournée (A1-01) — œuvre du domaine public",
+    "U45": {"sujet": "Le Cri, Edvard Munch, 1893 (A1-01) — domaine public, reproduction Wikimedia Commons ; "
+                     "en trois tons de la charte, signature et date hors cadre (choix de Togi du 21/10)",
+            "id": "Commons : Edvard_Munch,_1893,_The_Scream,…_National_Gallery_of_Norway.jpg", "auteur": "Edvard Munch",
+            "url": "https://commons.wikimedia.org/wiki/File:Edvard_Munch,_1893,_The_Scream,_oil,_tempera_and_pastel_on_cardboard,_91_x_73_cm,_National_Gallery_of_Norway.jpg"},
+    "U33": {"sujet": "Le David de Michel-Ange — remplacé par le Cri le 21/10 (pas reconnu au premier coup d'œil), non utilisé",
             "id": "1L4E_lsIb9Q", "auteur": "Jack Hunter",
             "url": "https://unsplash.com/photos/marble-statue-of-man-looking-away-1L4E_lsIb9Q"},
     "U34": {"sujet": "Étiquette kraft vierge et sa ficelle (A1-02 : le prix qu'on baisse, dessiné)",
@@ -69,7 +73,7 @@ PUBLICATIONS = [
         "id": "S04-A1", "format": "A", "pilier": "Vendre à la table de vente (répondre à « c’est trop cher »)",
         "type": "avant / après", "slug": "c-est-trop-cher", "titre": "« C’est trop cher. »", "palette": "creme",
         "pages": [
-            {"type": "accroche", "photo": "U33", "coin": "À enregistrer", "geant": "C’est trop cher.",
+            {"type": "accroche", "photo": "U45", "coin": "À enregistrer", "geant": "C’est trop cher.",
              "texte": "Deux réponses possibles. Laquelle est [[la vôtre~?]]"},
             {"type": "probleme", "photo": "U34", "citation": "«~C’est trop cher.~»",
              "texte": "Le premier réflexe~: baisser le prix.",

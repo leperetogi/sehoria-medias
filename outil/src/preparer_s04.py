@@ -130,8 +130,38 @@ def porte_monnaie():
     return detourer("U44-porte-monnaie", (340, 140, 1800, 1251), "U44", aire_min=40000, modele="u2net")
 
 
+# ---------------- A1, page 1 (21/10, 13 h 41) : le Cri remplace le David ----------------
+# Togi : les publications qui montrent un élément connu marchent mieux (Joconde, tour Eiffel…). La Joconde a déjà
+# servi en S02 : il a choisi le Cri. Le David (U33) n'est plus utilisé.
+
+def cri():
+    """U45 : Le Cri, Edvard Munch, 1893 (Galerie nationale de Norvège), reproduction Wikimedia Commons, domaine
+    public (Munch est mort en 1944). Recadré sur le personnage, le pont et le ciel : sans la signature « E. Munch
+    1893 » (bas gauche, une date ancienne, §6) ni la bande rouge du carton à droite. Passé en trois tons de la charte
+    (encre → terracotta → crème) : le ciel orange devient notre terracotta, le personnage reste lisible."""
+    boite = (400, 470, 1170, 1450)
+    im = Image.open(SRC / "U45-cri.jpg").convert("RGB").crop(boite)
+    a = np.asarray(im).astype(np.float32) / 255.0
+    lum = 0.299 * a[..., 0] + 0.587 * a[..., 1] + 0.114 * a[..., 2]
+    bas, haut = np.percentile(lum, 1.5), np.percentile(lum, 98.5)
+    l = np.clip((lum - bas) / (haut - bas), 0, 1)
+    import cv2
+    l = cv2.createCLAHE(clipLimit=2.2, tileGridSize=(6, 6)).apply((l * 255).astype(np.uint8)).astype(np.float32) / 255.0
+    l = np.clip((l - 0.5) * 1.35 + 0.5, 0, 1) ** 0.9
+    encre, terra, creme = (np.array(c, np.float32) for c in ((38, 32, 58), (192, 107, 62), (251, 245, 239)))
+    t1 = np.clip(l / 0.5, 0, 1)[..., None]
+    t2 = np.clip((l - 0.5) / 0.5, 0, 1)[..., None]
+    out = np.where(l[..., None] < 0.5, encre * (1 - t1) + terra * t1, terra * (1 - t2) + creme * t2)
+    out += np.random.default_rng(45).normal(0, 3.0, out.shape[:2] + (1,))
+    Image.fromarray(np.clip(out, 0, 255).astype(np.uint8)).save(OUT / "U45.jpg", quality=94)
+    # visage (pour un éventuel dessin), dans le recadrage
+    return {"taille": [boite[2] - boite[0], boite[3] - boite[1]], "recadrage": list(boite),
+            "visage": [660 - boite[0], 860 - boite[1]], "source": "Wikimedia Commons, domaine public"}
+
+
 ETAPES = {"U33": david, "U34": etiquette, "U35": ecran, "U36": balance, "U37": paire, "U38": mains, "U39": porte,
-          "U40": monture, "U41": carton, "U42": porte_bloc, "U43": cle, "U44": porte_monnaie}
+          "U40": monture, "U41": carton, "U42": porte_bloc, "U43": cle, "U44": porte_monnaie,
+          "U45": cri}
 
 if __name__ == "__main__":
     import sys
