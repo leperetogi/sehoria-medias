@@ -12,3 +12,4 @@
 - U42-porte-bloc ok — 2400 × 1600, 614 Ko — https://images.unsplash.com/photo-1743385779431-45d26d9775b1
 - U43-cle ok — 1603 × 2400, 809 Ko — https://images.unsplash.com/photo-1584985429926-08867327d3a6
 - U44-porte-monnaie ok — 2400 × 1351, 575 Ko — https://images.unsplash.com/photo-1669893903189-2c981358e1d0
+- U45-cri ok — 1280 × 1589, 852 Ko — https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/1280px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg
