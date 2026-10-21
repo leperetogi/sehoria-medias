@@ -399,18 +399,30 @@ def a2_07():
 
 # ============ B1 · La phrase qui porte ============
 
+def s_officiel():
+    """Le S du logo, seul (couleurs d'origine), découpé dans assets/logo-sehoria.png."""
+    cible = STICKERS / "logo-S.png"
+    if not cible.exists():
+        im = Image.open(ASSETS / "logo-sehoria.png").convert("RGBA")
+        s = im.crop((0, 0, 487, im.height))
+        s.crop(s.getbbox()).save(cible)
+    return cible
+
+
 def b1_01():
     p = B1[0]
     phrase = f'<div class="texte" style="font-size:72px;font-weight:700;line-height:1.1;text-align:center">{md(p["phrase"])}</div>'
     chute = (f'<div class="chute" style="font-size:88px;text-align:center;margin-top:34px">'
              f'{md(marquer(p["chute"], "une question."))}</div>')
-    guill = ('<div class="bloc" aria-hidden="true" style="left:465px;top:100px;width:150px;height:150px;background:#26203A;'
-             'transform:rotate(-4deg);z-index:22;box-shadow:8px 8px 0 rgba(0,0,0,.18)">'
-             '<div style="font:800 210px/1 Fraunces;font-variation-settings:\'opsz\' 144,\'SOFT\' 100;color:#FBF5EF;'
-             'text-align:center;margin-top:-18px">«</div></div>')
+    # Le S officiel à la place du « (Togi, 21/10 : le « dans son carré se lisait comme deux petites flèches).
+    # Tuile crème, ombre décalée encre (comme les bandeaux), le S dans ses couleurs d'origine.
+    tuile = ('<div class="bloc" aria-hidden="true" style="left:458px;top:92px;width:164px;height:164px;background:#FFFCF7;'
+             'border-radius:34px;transform:rotate(-4deg);z-index:22;box-shadow:8px 8px 0 #26203A">'
+             f'<img alt="" src="{url(s_officiel())}" style="position:absolute;left:50%;top:50%;height:118px;'
+             'transform:translate(-50%,-50%)"></div>')
     c = [
         feuille(phrase + chute, 88, 170, 904, hauteur=620, r=-2, padding="140px 52px 56px"),
-        guill,
+        tuile,
         decoupe("U44", (560, 380), gauche=262, haut=760, rot=-5, contour=CREME, couleur=ENCRE, devant=True),
         mono(PARTAGE, 72, 1182, 28, couleur=CREME, maxw=250),
         logo(826, 1194, 46, "creme"),
