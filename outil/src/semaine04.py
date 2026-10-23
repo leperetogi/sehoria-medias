@@ -68,6 +68,17 @@ PARTAGE = "À partager avec votre équipe"
 LIEN = "https://sehoria.fr"
 FREIN_LEGENDE = "Premier mois offert, sans engagement, résiliable à tout moment."
 
+# Dernière page « Suivez » (décision de Togi du 23/10, après le bilan Metricool : aucune demande d'accès depuis le 6/10,
+# 15 abonnés). Plus de « Demander un accès » sur les carrousels de conseil : la dernière page invite à suivre.
+# L'accès reste dans la bio, et un post par mois parle du problème que règle Sehoria (ici S04-A2).
+SUIVRE_1 = "Un conseil pour votre magasin,"
+SUIVRE_2 = "chaque semaine."
+SUIVRE_ACTION = "Suivez Sehoria"
+SUIVRE_RAISON = "Pour ne pas rater le prochain."
+SUIVRE_IG = "Un conseil pour votre magasin, chaque semaine~: suivez @sehoria.fr."
+SUIVRE_FB = "Un conseil pour votre magasin, chaque semaine~: suivez la page Sehoria."
+SUIVRE_LI = "Un conseil pour votre magasin, chaque semaine~: suivez la page Sehoria."
+
 PUBLICATIONS = [
     {
         "id": "S04-A1", "format": "A", "pilier": "Vendre à la table de vente (répondre à « c’est trop cher »)",
@@ -94,13 +105,14 @@ PUBLICATIONS = [
              "citation": "«~On garde quoi, on enlève quoi~?~»",
              "chute": "C’est lui qui [[choisit.]]",
              "enregistrer": "Enregistrez-le~: au prochain «~c’est trop cher~», vous aurez les mots."},
-            {"type": "cta"},
+            {"type": "suivre"},
         ],
+        "fin": "suivre",   # 23/10 : dernière page et légendes sans « Demander un accès »
         "legendes": {
             "instagram": (
                 "À enregistrer pour le prochain «~c’est trop cher~».\n"
                 "Pas de remise tout de suite. Demandez~: «~Trop cher par rapport à quoi~?~», puis reprenez ses mots.\n\n"
-                "Demander un accès~: lien en bio.\n\n"
+                + SUIVRE_IG + "\n\n"
                 "#opticien #opticienne #magasindoptique #equipedevente #conseilvente"),
             "linkedin": (
                 "À enregistrer pour le prochain «~c’est trop cher~».\n\n"
@@ -110,9 +122,7 @@ PUBLICATIONS = [
                 "→ Reprenez ses mots~: «~Vous êtes sur écran toute la journée. Ces verres, c’est pour ça.~» "
                 "Il ne voit plus un prix, il voit sa journée.\n"
                 "→ Il insiste~? Pas de remise~: «~On garde quoi, on enlève quoi~?~» C’est lui qui choisit.\n\n"
-                "Lancez vos challenges. L’app compte les ventes.\n"
-                "Demander un accès~: https://sehoria.fr\n"
-                "Premier mois offert, sans engagement, résiliable à tout moment."),
+                + SUIVRE_LI),
         },
         "repartage_togi": "Une remise donnée trop vite, le client s’en souvient à sa prochaine visite.",
         "musique": "piano léger, sans paroles, volume bas",
@@ -191,7 +201,9 @@ def legende_facebook(pub):
     """Charte §3 : la légende Instagram sans mots-clés ; « lien en bio » devient le lien suivi du frein (phrase B : sans lien)."""
     t = pub["legendes"]["instagram"]
     t = "\n".join(l for l in t.split("\n") if not l.startswith("#")).rstrip()
-    if pub["format"] == "A":
+    if pub.get("fin") == "suivre":
+        t = t.replace(SUIVRE_IG, SUIVRE_FB)
+    elif pub["format"] == "A":
         t = t.replace("Demander un accès~: lien en bio.", f"Demander un accès~: {LIEN}\n{FREIN_LEGENDE}")
     return t
 

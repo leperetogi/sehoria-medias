@@ -13,7 +13,8 @@ from PIL import Image, ImageOps
 from composants import (bloc, bandeau, texte, mono, feuille, decoupe, logo, page, md, marquer, couleur_soulignes, url,
                         ASSETS, STICKERS)
 from decoupes import gris_collage
-from semaine04 import (PUBLICATIONS, CTA_MARQUE_1, CTA_MARQUE_2, CTA_ACTION, CTA_FREIN, CTA_SIGNATURE, PARTAGE)
+from semaine04 import (PUBLICATIONS, CTA_MARQUE_1, CTA_MARQUE_2, CTA_ACTION, CTA_FREIN, CTA_SIGNATURE, PARTAGE,
+                       SUIVRE_1, SUIVRE_2, SUIVRE_ACTION, SUIVRE_RAISON)
 
 A1 = PUBLICATIONS[0]["pages"]
 A2 = PUBLICATIONS[1]["pages"]
@@ -21,7 +22,8 @@ B1 = PUBLICATIONS[2]["pages"]
 
 VIOLET, TERRA, ENCRE, CREME = "#4120CF", "#C06B3E", "#26203A", "#FBF5EF"
 PAD = 14 + 11 + 13 + 6  # marge ajoutée par le sticker (contour blanc + contour décalé)
-REPERES = json.loads((ASSETS / "decoupes" / "reperes_s04.json").read_text())
+_REPERES = ASSETS / "decoupes" / "reperes_s04.json"   # absent quand on ne refait qu'une page sans photo (23/10)
+REPERES = json.loads(_REPERES.read_text()) if _REPERES.exists() else {}
 
 
 # ---------------- fonds (générés, aucune image tierce) ----------------
@@ -292,8 +294,24 @@ def a1_06():
     return page("A1-06", c, [], palette="creme", fond="papier-creme-1.png")
 
 
+def page_suivre(ident, palette, fond, souligne):
+    """Dernière page « Suivez » (décision de Togi du 23/10) : la promesse du compte, une seule action (suivre),
+    la raison, la signature. Pas de lien d'accès : il reste dans la bio. Même ossature que page_cta."""
+    c = [
+        bandeau(SUIVRE_1, 52, 170, 74, r=-2, variante="clair titre", maxw=980),
+        texte(couleur_soulignes(marquer(SUIVRE_2, SUIVRE_2), souligne), 76, 360, 104, maxw=960, classe="chute"),
+        bandeau(SUIVRE_ACTION, 58, 600, 84, r=-2, variante="titre", ident="action"),
+        texte(SUIVRE_RAISON, 80, 790, 52, maxw=900, couleur="#3A3350"),
+        logo(342, 1010, 140),
+        mono(CTA_SIGNATURE, 60, 1196, 28, couleur="#6E6782", largeur=960, align="center"),
+    ]
+    plan = [{"t": "fleche", "de": [830, 500], "a": [690, 640], "courbe": -0.45, "c": "accent", "ep": 5.5, "graine": 4, "tete": 28}]
+    return page(ident, c, plan, palette=palette, fond=fond, miroir=True)
+
+
 def a1_07():
-    return page_cta("A1-07", "creme", "papier-creme-3.png", "violet")
+    # 23/10 : la page « Demander un accès » (page_cta) est remplacée par la page « Suivez » (fin du test v1.5)
+    return page_suivre("A1-07", "creme", "papier-creme-3.png", "violet")
 
 
 # ============ A2 · Qui a vendu cette paire ? (style dossier, encre + crème + terracotta) ============
