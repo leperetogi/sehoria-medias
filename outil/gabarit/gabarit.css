@@ -125,3 +125,30 @@ sup{font-size:max(.6em, 28px);line-height:0;vertical-align:.55em}
 .trombone{position:absolute;z-index:32;overflow:visible;filter:drop-shadow(2px 4px 3px rgba(0,0,0,.35))}
 .pal-dossier .mono{color:var(--creme)}
 .pal-dossier .relance{color:var(--creme)}
+
+/* ---- S05 : format « photo plein cadre » (test accepté par Togi le 27/10 ; maquette outil/maquettes/format-photo) ----
+   Photo sur toute la page, dégradé encre en bas, titre Poppins 800 en capitales avec un mot en bandeau violet. */
+@font-face{font-family:"Poppins";src:url("../node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2");font-weight:800;}
+@font-face{font-family:"Poppins";src:url("../node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2") format("woff2");font-weight:600;}
+.page.pal-photo{--fond:var(--encre);color:var(--creme);font-family:"Poppins",sans-serif}
+.pal-photo .ph-haut{position:absolute;inset:0;z-index:5;background:linear-gradient(to bottom,rgba(38,32,58,.6),rgba(38,32,58,0) 15%)}
+.pal-photo .ph-voile{position:absolute;inset:0;z-index:5;--v0:30%;
+  background:linear-gradient(to bottom,rgba(38,32,58,0) var(--v0),rgba(38,32,58,.8) calc(var(--v0) + 17%),
+  rgba(38,32,58,.97) calc(var(--v0) + 25%),var(--encre) calc(var(--v0) + 31%))}
+.pal-photo .ph-puce{font:600 28px "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;background:var(--violet);
+  color:var(--creme);padding:8px 16px;border-radius:6px}
+.pal-photo .ph-pile{display:flex;flex-direction:column;gap:30px}
+.pal-photo .ph-sig{display:flex;align-items:center;gap:22px;font:600 28px "JetBrains Mono",monospace;letter-spacing:.08em;
+  text-transform:uppercase;color:#CFC6E6}
+.pal-photo .ph-sig img{height:42px;display:block}
+.pal-photo .ph-titre{font-weight:800;text-transform:uppercase;line-height:1.12;letter-spacing:-.005em;color:var(--creme)}
+.pal-photo .ph-corps{font-weight:600;text-transform:uppercase;line-height:1.2;color:#E9E3F5}
+.pal-photo .b{background:var(--violet);color:var(--creme);padding:0 .18em;box-decoration-break:clone;-webkit-box-decoration-break:clone;
+  margin-left:-.05em}
+.pal-photo .ph-bouton{display:inline-block;align-self:flex-start;background:var(--violet);color:var(--creme);font-weight:800;
+  text-transform:uppercase;padding:.16em .5em .2em;border-radius:14px;box-shadow:8px 8px 0 #0E0B18;transform:rotate(-2deg)}
+.pal-photo .ph-pied{display:flex;justify-content:space-between;align-items:center;font:600 28px "JetBrains Mono",monospace;
+  letter-spacing:.14em;text-transform:uppercase;color:#CFC6E6}
+.pal-photo .ph-pied .g{display:flex;align-items:center;gap:18px}
+.pal-photo .relance{color:var(--creme)}
+.pal-photo .fleche-photo{color:#8F6CFF}

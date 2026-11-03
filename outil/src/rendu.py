@@ -15,7 +15,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from composants import document, RACINE
 from controle import verifier, compter_mots, normaliser
 
-POLICES_ATTENDUES = ("Fraunces", "JetBrainsMono", "JetBrains", "GochiHand", "Gochi", "Anton")  # Anton : essai « affiche » S03
+POLICES_ATTENDUES = ("Fraunces", "JetBrainsMono", "JetBrains", "GochiHand", "Gochi", "Anton",   # Anton : essai « affiche » S03
+                     "Poppins")   # Poppins : format « photo plein cadre », test S05 accepté par Togi le 27/10
 
 JS_CONTROLES = r"""
 () => {

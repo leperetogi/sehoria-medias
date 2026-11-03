@@ -59,6 +59,10 @@ def principal(seulement=None):
             assert not erreurs, (pub["id"], reseau, erreurs)
             if pub["format"] == "B":
                 assert "Demander un accès" not in leg and "À partager avec votre équipe" in leg, pub["id"]
+            elif pub.get("fin") == "signature":   # S05 : profil LinkedIn de Togi, il ne vend rien (charte §2-3)
+                assert reseau == "linkedin", (pub["id"], reseau)
+                bas = leg.lower()
+                assert not any(m in bas for m in ("demander un accès", "suivez", "sehoria", "http", "#")), pub["id"]
             elif pub.get("fin") == "suivre":   # 23/10 : carrousel de conseil, on invite à suivre, sans lien d'accès
                 assert "Demander un accès" not in leg and "suivez" in leg.lower(), (pub["id"], reseau)
                 assert ("#" in leg) == (reseau == "instagram"), (pub["id"], reseau)
