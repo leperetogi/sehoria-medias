@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:"Poppins";src:url("../../node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2");font-weight:800;}
+@font-face{font-family:"Poppins";src:url("../../node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2") format("woff2");font-weight:600;}
+@font-face{font-family:"JetBrains Mono";src:url("../../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2") format("woff2");font-weight:100 800;}
+@font-face{font-family:"Gochi Hand";src:url("../../node_modules/@fontsource/gochi-hand/files/gochi-hand-latin-400-normal.woff2") format("woff2");}
+:root{--encre:#26203A;--creme:#FBF5EF;--violet:#4120CF;--violet2:#6B38F5;--terra:#C06B3E}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111}
+.page{position:relative;width:1080px;height:1350px;overflow:hidden;background:var(--encre);color:var(--creme);font-family:"Poppins";margin-bottom:20px}
+.photo{position:absolute;left:0;top:0;width:1080px;height:1350px;object-fit:cover}
+.voile{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(38,32,58,0) 34%,rgba(38,32,58,.78) 52%,rgba(38,32,58,.97) 60%,var(--encre) 66%)}
+.haut{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(38,32,58,.55),rgba(38,32,58,0) 14%)}
+.puce{position:absolute;left:60px;top:58px;font:600 28px "JetBrains Mono";letter-spacing:.12em;text-transform:uppercase;background:var(--violet);color:var(--creme);padding:8px 16px;border-radius:6px}
+.sig{position:absolute;left:60px;display:flex;align-items:center;gap:22px}
+.sig img{height:42px}
+.sig span{font:500 28px "JetBrains Mono";letter-spacing:.08em;text-transform:uppercase;color:#CFC6E6}
+.titre{position:absolute;left:60px;width:960px;font-weight:800;text-transform:uppercase;line-height:1.12;letter-spacing:-.005em}
+.titre .b{background:var(--violet);padding:0 .18em;box-decoration-break:clone;-webkit-box-decoration-break:clone;margin-left:-.05em}
+.corps{position:absolute;left:60px;width:960px;font-weight:600;text-transform:uppercase;line-height:1.18;color:#E9E3F5}
+.pied{position:absolute;left:60px;right:60px;bottom:52px;display:flex;justify-content:space-between;align-items:center;font:500 28px "JetBrains Mono";letter-spacing:.14em;text-transform:uppercase;color:#CFC6E6}
+.pied .g{display:flex;align-items:center;gap:18px}
+.maquette{position:absolute;right:-70px;top:60px;transform:rotate(35deg);background:var(--terra);color:var(--creme);font:700 28px "JetBrains Mono";letter-spacing:.2em;padding:8px 90px}
+</style></head><body>
+
+<section class="page" id="P1">
+  <img class="photo" src="p1.jpg" alt="">
+  <div class="haut"></div><div class="voile"></div>
+  <div class="puce">À enregistrer</div>
+  <div class="maquette">MAQUETTE</div>
+  <div class="sig" style="top:836px"><img src="logo-creme.png" alt="Sehoria"><span>Arnaud · opticien depuis 16 ans</span></div>
+  <div class="titre" style="top:912px;font-size:66px">Un client entre. Personne ne le regarde. Voici ce que vous venez de <span class="b">perdre…</span></div>
+  <div class="pied"><div class="g">Faites glisser
+    <svg width="110" height="46" viewBox="0 0 96 44" style="overflow:visible"><path d="M4 28 C 28 14, 52 34, 84 20" stroke="#8F6CFF" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 7 L86 20 L69 35" stroke="#8F6CFF" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div>01/07</div></div>
+</section>
+
+<section class="page" id="P2">
+  <img class="photo" src="p2.jpg" alt="">
+  <div class="haut"></div><div class="voile"></div>
+  <div class="maquette">MAQUETTE</div>
+  <div class="titre" style="top:860px;font-size:60px"><span class="b">1.</span> Regardez-le tout de suite.</div>
+  <div class="corps" style="top:1010px;font-size:42px">Même avec un autre client&#8239;: un sourire, et «&#8239;je suis à vous dans quelques minutes&#8239;». Il sait qu’on l’a vu.</div>
+  <div class="pied"><div class="g"><img src="logo-creme.png" alt="Sehoria" style="height:34px"></div>
+    <div class="g">02/07
+    <svg width="90" height="38" viewBox="0 0 96 44" style="overflow:visible"><path d="M4 28 C 28 14, 52 34, 84 20" stroke="#8F6CFF" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 7 L86 20 L69 35" stroke="#8F6CFF" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+</section>
+</body></html>
