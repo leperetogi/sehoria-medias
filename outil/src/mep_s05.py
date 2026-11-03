@@ -61,7 +61,7 @@ def page_photo(ident, photo, contenu, v0="30%"):
 def p01(marque=True):
     p = A1[0]
     sig = (f'<div class="ph-sig">' + (f'<img alt="Sehoria" src="{logo_creme()}">' if marque else "")
-           + f'<span>{md(p["sig"])}</span></div>')
+           + f'<span>{md(p["credit"])}</span></div>')
     glisser = f'<span>{md(p["glisser"])}</span>{fleche(110)}'
     c = [
         f'<div class="bloc" style="left:60px;top:58px"><div class="ph-puce">{md(p["coin"])}</div></div>',

@@ -7,7 +7,12 @@ touchées) ; écartée par Togi le 03/11 (noms de marque et de produit, §5-6). 
 Textes et photos validés par Togi le 03/11 à 13 h 27 (« on y va ») : phrase B option A.
 
 Carrousel du jeudi = fiche de la vidéo (charte v2.2), ses phrases ; format test « photo plein cadre » (maquette du
-25/10, accepté par Togi le 27/10) ; page 1 avec le visage de Togi (charte v2.3).
+25/10, accepté par Togi le 27/10).
+03/11, 18 h 26 — Togi refuse son visage en page principale : « la valeur de ces images, c'est une photo de quelqu'un
+que l'on reconnaît, une photo impactante » ; objectif : un maximum d'abonnés et d'interactions ; références
+@mindshifter__ et @_mind__vision_. Claude ne met pas de photo de vraie célébrité (presse, films, mèmes) : Togi choisit
+l'autoportrait de Van Gogh (page 1) et La Nuit étoilée (halos). Règles levées le même jour : noms de marques permis
+dans le texte, citations sourcées permises, sujet libre chaque semaine.
 Changements par rapport à la vidéo : « Depuis dimanche » retiré (le carrousel sort dix jours après) ; la réplique du
 Corniaud retirée (extrait de film, §5) ; « comptoir » nulle part (§6).
 Vérifié le 03/11 : permis B, acuité binoculaire ≥ 5/10 avec correction, arrêté du 28 mars 2022 (service-public).
@@ -20,11 +25,10 @@ Balisage : [[mot]] souligné · ~ espace insécable.  Opticiens vouvoyés ; phra
 SEMAINE = "05"
 
 PHOTOS = {
-    "S05-P1": {"sujet": "Togi, image de sa vidéo du 28/10 à 44,4 s, arrière-plan flouté", "auteur": "Togi"},
-    "S05-P3": {"sujet": "Togi, 23,5 s (« pas le droit »)", "auteur": "Togi"},
-    "S05-P5": {"sujet": "Togi, 42,6 s (« Envoyez-le »)", "auteur": "Togi"},
-    "S05-P6": {"sujet": "Togi, 29,6 s, il pointe la caméra", "auteur": "Togi"},
-    "S05-P7": {"sujet": "Togi, 5,3 s, grand sourire", "auteur": "Togi"},
+    "U50": {"sujet": "Vincent van Gogh, Autoportrait, 1887 (Art Institute of Chicago), domaine public (A1-01, A1-03, A1-07)",
+            "id": "Commons : Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_(454045).jpg", "auteur": "Vincent van Gogh"},
+    "U51": {"sujet": "Vincent van Gogh, La Nuit étoilée, 1889 (MoMA), domaine public (A1-05, A1-06, A1s-07)",
+            "id": "Commons : Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg", "auteur": "Vincent van Gogh"},
     "U49": {"sujet": "Route de montagne en hiver à la tombée de la nuit, phares allumés (A1-02)", "id": "O1KiClaHi2A",
             "auteur": "Emmanuel Mavely", "url": "https://unsplash.com/photos/cars-driving-on-a-winding-road-in-winter-O1KiClaHi2A"},
     "U47": {"sujet": "Feux flous vus à travers un pare-brise sale, la nuit (A1-04)", "id": "bZe2MgfOURE",
@@ -35,7 +39,7 @@ PHOTOS = {
             "id": "Par7efrq8Tw", "auteur": "Sam Tsonis"},
 }
 
-SIGNATURE = "Arnaud · opticien depuis 16 ans"
+CREDIT_P1 = "Van Gogh · autoportrait"
 CTA_SIGNATURE = "Construit par un opticien, pour les opticiens"
 PARTAGE = "À partager avec votre équipe"
 
@@ -48,30 +52,30 @@ SUIVRE_FB = "Un conseil pour votre magasin, chaque semaine~: suivez la page Seho
 SUIVRE_LI = "Un conseil pour votre magasin, chaque semaine~: suivez la page Sehoria."
 
 PAGES = [
-    {"type": "accroche", "photo": "S05-P1", "coin": "À enregistrer", "sig": SIGNATURE,
+    {"type": "accroche", "photo": "S05-VG1", "coin": "À enregistrer", "credit": CREDIT_P1,
      "titre": "Certains de vos clients n’ont plus le droit de conduire. Et ils ne le savent pas.",
      "bande": "ne le savent pas.", "glisser": "Faites glisser"},
     {"type": "probleme", "photo": "S05-P2", "titre": "La nuit tombe une heure plus tôt.", "bande": "plus tôt.",
      "corps": "Vos clients rentrent en voiture dans le noir. Certains n’y voient plus assez pour conduire.",
      "relance": "Quoi leur dire~?"},
-    {"type": "point", "photo": "S05-P3", "titre": "1. La loi des 5/10.", "bande": "1.",
+    {"type": "point", "photo": "S05-VG3", "titre": "1. La loi des 5/10.", "bande": "1.",
      "corps": "Moins de 5/10 avec les deux yeux et ses lunettes~: pas le droit de conduire. Mesurez, et dites-le-lui.",
      "relance": "Ce n’est pas sa vue~?"},
     {"type": "point", "photo": "S05-P4", "titre": "2. Le pare-brise.", "bande": "2.",
      "corps": "Avant d’accuser ses lunettes, accusez son pare-brise~: le film gras à l’intérieur fait des halos "
               "autour des phares.",
      "relance": "Et si les halos restent~?"},
-    {"type": "point", "photo": "S05-P5", "titre": "3. Les halos qui restent.", "bande": "3.",
+    {"type": "point", "photo": "S05-NE5", "titre": "3. Les halos qui restent.", "bande": "3.",
      "corps": "Pare-brise propre, lunettes propres, et toujours des halos~? C’est peut-être une cataracte qui commence. "
               "Envoyez-le chez l’ophtalmo.",
      "relance": "À retenir"},
-    {"type": "chute", "photo": "S05-P6",
+    {"type": "chute", "photo": "S05-NE6",
      "titre": "Après le permis, personne ne fait attention à ces 5~dixièmes. À part vous.", "bande": "À part vous.",
      "enregistrer": "Enregistrez-le~: cet hiver, vous aurez les trois points sous la main."},
-    {"type": "suivre", "photo": "S05-P7"},
+    {"type": "suivre", "photo": "S05-VG7"},
 ]
 
-PAGES_SIGNATURE = PAGES[:6] + [{"type": "signature", "photo": "S05-P7", "nom": "Arnaud", "metier": "Opticien depuis 16 ans",
+PAGES_SIGNATURE = PAGES[:6] + [{"type": "signature", "photo": "S05-NE7", "nom": "Arnaud", "metier": "Opticien depuis 16 ans",
                                 "partage": PARTAGE + "."}]
 
 LISTE_LI = (

@@ -85,7 +85,9 @@ def verifier(texte: str, contexte: str = "A"):
         if e in EXCEPTIONS:
             continue
         if re.search(r"(?<![a-zà-ÿ])" + re.escape(e) + r"(?![a-zà-ÿ])", low):
-            constats.append(("ERREUR", "nom d'enseigne, de fournisseur ou de marque (§5, §6)", e))
+            # 03/11 : noms de marques permis dans le texte quand le sujet l'exige (décision de Togi) ; ni logo ni photo
+            # du produit. Reste une alerte, pour relire le contexte.
+            constats.append(("ALERTE", "nom de marque : permis dans le texte depuis le 03/11, sans logo ni photo du produit", e))
     for phrase in re.split(r"(?<=[.!?…])\s+|\n", low):
         for m in SUPERLATIF.finditer(phrase):
             if SUJET_SEHORIA.search(phrase):

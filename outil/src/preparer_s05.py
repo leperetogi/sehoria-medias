@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 """Semaine 05 — préparation des images du format « photo plein cadre » (test S05) et de la phrase B.
 
-Entrées :
-- la vidéo de Togi du 28/10 « Conduite de nuit » : ../video/2026-10-30-changement-heure.mp4 (Reel publié le 28/10) ;
-- assets/photos/U47-parebrise, U48-phare, U49-route-hiver (Unsplash, téléchargées par GitHub le 03/11,
-  validées par Togi le 03/11 à 13 h 27 « on y va »). U46-route (téléchargée) n'est pas utilisée : 4×4 vu de face,
-  plaque lisible et tours récentes en fond (§5).
-Sorties : assets/decoupes/S05-*.jpg (pages pleine photo 1080 × 1350) et U48.png (phare détouré).
+Décision de Togi du 03/11 (18 h 26) : pas son visage en page principale ; un visage que tout le monde reconnaît,
+impactant (comptes de référence : @mindshifter__, @_mind__vision_). Pas de photo de vraie célébrité (presse, films,
+mèmes) : œuvres du domaine public. Choix de Togi : l'autoportrait de Van Gogh en page 1, La Nuit étoilée pour les halos.
 
-Images tirées de la vidéo (charte v2.3, visage de Togi) : seulement des moments sans incrustation (ni mème, ni
-carte, ni gros mot animé) ; les sous-titres incrustés passent sous le dégradé du bas. L'arrière-plan est flouté
-(masque de personne) : logo du fauteuil, objets de l'étagère et affiche du mur deviennent illisibles (§5)."""
+Entrées (téléchargées par GitHub le 03/11) :
+- U50 : Vincent van Gogh, Autoportrait, 1887 (Art Institute of Chicago), reproduction Wikimedia Commons, domaine public ;
+- U51 : Vincent van Gogh, La Nuit étoilée, 1889 (MoMA), reproduction Wikimedia Commons, domaine public ;
+- U47-parebrise, U48-phare, U49-route-hiver (Unsplash, validées par Togi le 03/11 à 13 h 27). U46-route (téléchargée)
+  n'est pas utilisée : 4×4 de face, plaque lisible et tours récentes en fond (§5).
+Sorties : assets/decoupes/S05-*.jpg (pages pleine image 1080 × 1350) et U48.png (phare détouré).
+Les images tirées de la vidéo de Togi (première version du 03/11, refusée à 18 h 26) ne sont plus utilisées :
+fonction pages_video() gardée pour mémoire."""
 import subprocess
 import sys
 from pathlib import Path
@@ -66,6 +68,22 @@ def pages_video():
         print(nom, f"{t} s")
 
 
+def recadrer(src, boite, nom):
+    im = Image.open(SRC / f"{src}.jpg").convert("RGB").crop(boite)
+    im.resize((W, H), Image.LANCZOS).save(OUT / f"{nom}.jpg", quality=94)
+
+
+def oeuvres():
+    """Van Gogh, domaine public (mort en 1890). Recadrages 4:5 ; le haut de l'image reste visible au-dessus du dégradé."""
+    recadrer("U50-vangogh-autoportrait", (0, 26, 1899, 2400), "S05-VG1")       # p. 1 : le visage entier
+    recadrer("U50-vangogh-autoportrait", (480, 600, 1440, 1800), "S05-VG3")    # p. 3 : le regard, en gros plan
+    recadrer("U51-nuit-etoilee", (704, 0, 1920, 1520), "S05-NE5")              # p. 5 : la lune et les étoiles, leurs halos
+    recadrer("U51-nuit-etoilee", (0, 0, 1216, 1520), "S05-NE6")                # p. 6 : le cyprès sous le ciel
+    recadrer("U50-vangogh-autoportrait", (200, 400, 1700, 2275), "S05-VG7")    # p. 7 (Sehoria) : le visage, plus serré
+    recadrer("U51-nuit-etoilee", (352, 0, 1568, 1520), "S05-NE7")              # p. 7 (signature) : le ciel, sans visage
+    print("S05-VG1, VG3, NE5, NE6, VG7, NE7")
+
+
 def pages_photos():
     # U49 : route de montagne en hiver, à la tombée de la nuit, phares allumés (Emmanuel Mavely, O1KiClaHi2A).
     # Voitures minuscules : aucune plaque ni marque lisible. Le virage et les voitures en haut, la neige en dessous.
@@ -87,6 +105,6 @@ def phare():
 
 
 if __name__ == "__main__":
-    pages_video()
+    oeuvres()
     pages_photos()
     phare()
