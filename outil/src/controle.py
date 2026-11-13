@@ -7,6 +7,7 @@ APOS = "'’ʼ"
 
 def normaliser(t: str) -> str:
     t = t.replace("[[", "").replace("]]", "").replace("{{", "").replace("}}", "")
+    t = t.replace("\u2011", "-")   # trait d'union insécable (S06)
     t = t.replace("~", " ").replace(" ", " ").replace(" ", " ").replace(" ", " ")
     for a in APOS:
         t = t.replace(a, "'")
