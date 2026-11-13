@@ -1,0 +1,8 @@
+# S06 — photos téléchargées
+
+- U52-vermeer ok — 1920 × 2274, 1955 Ko — https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/1920px-1665_Girl_with_a_Pearl_Earring.jpg
+- U53-boite-papiers ok — 1600 × 2400, 642 Ko — https://images.unsplash.com/photo-1777451440796-b57e5bc84928?ixid=M3wxMDE3MjIwfDB8MXxzZWFyY2h8M3x8b3BlbiUyMGRyYXdlciUyMHdpdGglMjBwYXBlcnN8ZW58MHwxfHx8MTc5NDI5NDEzM3wy&ixlib=rb-4.1.0
+- U54-table-deux ok — 1600 × 2400, 611 Ko — https://images.unsplash.com/photo-1513470270416-d3ff6f16b22f?ixid=M3wxMDE3MjIwfDB8MXxzZWFyY2h8M3x8dHdvJTIwcGVvcGxlJTIwdGFsa2luZyUyMGFjcm9zcyUyMGElMjB0YWJsZSUyMGxpc3RlbmluZ3xlbnwwfDF8fHwxNzk0Mjk0MTMzfDI&ixlib=rb-4.1.0
+- U55-photo-telephone ok — 1600 × 2400, 1073 Ko — https://images.unsplash.com/photo-1786915862595-9db1abf07cfb?ixid=M3wxMDE3MjIwfDB8MXxzZWFyY2h8NHx8d29tYW4lMjB0cnlpbmclMjBvbiUyMGdsYXNzZXMlMjB0YWtpbmclMjBwaG90byUyMHdpdGglMjBwaG9uZXxlbnwwfHx8fDE3OTQyOTQxMzN8Mg&ixlib=rb-4.1.0
+- U56-stylo-plume ok — 2400 × 1802, 512 Ko — https://images.unsplash.com/photo-1455390582262-044cdead277a?ixid=M3wxMDE3MjIwfDB8MXxzZWFyY2h8Mnx8Zm91bnRhaW4lMjBwZW58ZW58MHx8fHwxNzk0Mjk0MTMzfDI&ixlib=rb-4.1.0
+- U57-stylo-dore ok — 2400 × 1800, 232 Ko — https://images.unsplash.com/photo-1518674660708-0e2c0473e68e?ixid=M3wxMDE3MjIwfDB8MXxzZWFyY2h8NHx8Zm91bnRhaW4lMjBwZW58ZW58MHx8fHwxNzk0Mjk0MTMzfDI&ixlib=rb-4.1.0
