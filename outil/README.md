@@ -29,6 +29,9 @@ les photos réussies dans `assets/photos/`. Un échec s'affiche avec sa raison. 
    Dessins disponibles (`gabarit/dessins.js`) : en plus de ceux de S01, `lunettes`, `soleil`, `nuage` (option `pluie`), `visage` (dessiné, option `flou`), `telephone`, `bulleVide`.
 4. Contrôles automatiques : ≤ 30 mots par page, rien sous 28 px, zone de sécurité, chevauchements, polices chargées, texte du PDF = texte de la page, interdits du §6 (`src/controle.py`).
 
+## Version Reel (depuis S06)
+`python3 src/reel.py NN SNN-A1` après `semaine.py` : les pages défilent sur un fond encre 1080 × 1920, durée selon les mots, musique composée par le script (sans paroles, volume bas). Sortie : `livraison/SNN/SNN-A1_<slug>_reel.mp4`, à copier dans `../SNN/` avec les JPEG. Facebook : à la place de l'album ; Instagram : le mardi suivant, onglet Reels seulement.
+
 ## Programmer (Metricool)
 - Convertir les pages en JPEG qualité 95 dans `../SNN/` (dossier racine du dépôt), pousser, puis donner à Metricool les liens
   `https://raw.githubusercontent.com/leperetogi/sehoria-medias/main/SNN/<fichier>.jpg` (Metricool recopie les images chez lui).
