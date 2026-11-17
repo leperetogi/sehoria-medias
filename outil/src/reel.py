@@ -26,6 +26,8 @@ SR = 44100
 
 def durees(mots):
     d = []
+    if len(mots) == 1:                                     # phrase B seule (Reel Facebook, depuis S07) : 8 s
+        return [8.0]
     for i, m in enumerate(mots):
         if i == 0:
             d.append(4.0)                                  # l'accroche

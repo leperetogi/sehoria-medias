@@ -69,7 +69,7 @@ def principal(seulement=None):
             else:
                 assert ("lien en bio" in leg) if reseau == "instagram" else ("sehoria.fr" in leg), (pub["id"], reseau)
                 if reseau != "instagram":
-                    assert "#" not in leg and "Premier mois offert" in leg, (pub["id"], reseau)
+                    assert "#" not in leg and ("Premier mois offert" in leg or "Sans carte bancaire" in leg), (pub["id"], reseau)   # landing changée le 15/11
             lignes += [f"[{reseau.upper()}]", leg, ""]
         lignes.append("")
     (LIVRAISON / f"S{SEMAINE}_legendes.txt").write_text("\n".join(lignes), encoding="utf-8")
