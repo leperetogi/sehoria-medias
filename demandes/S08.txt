@@ -1,0 +1,12 @@
+U68-louis14 https://upload.wikimedia.org/wikipedia/commons/5/5f/Louis_XIV_of_France.jpg
+U68b-louis14 https://upload.wikimedia.org/wikipedia/commons/4/4d/Hyacinthe_Rigaud_-_Louis_XIV%2C_roi_de_France_%281638-1715%29.jpg
+U69-chardin https://upload.wikimedia.org/wikipedia/commons/c/c4/Self-portrait_wearing_Glasses_by_Jean-Baptiste-Sim%C3%A9on_Chardin.jpg
+U69b-chardin https://upload.wikimedia.org/wikipedia/commons/7/7c/Chardin_pastel_selfportrait.jpg
+U69c-chardin https://upload.wikimedia.org/wikipedia/commons/b/b4/Jean_Sim%C3%A9on_Chardin_-_Self-Portrait_-_WGA04785.jpg
+U70-lunettes-tendues https://images.unsplash.com/photo-1540162875225-3f6b56d69fe8
+U71-table-chaises https://images.unsplash.com/photo-1775129893527-712aae9475ef
+U72-gouttes https://images.unsplash.com/photo-1514908194807-7c111c343975
+U73-monture-noire https://images.unsplash.com/photo-1577410114274-ef015b5b6d29
+U74-arbres https://images.unsplash.com/photo-1512099053734-e6767b535838
+U75-table-ancienne https://images.unsplash.com/photo-1536436967234-f5f99a9b7372
+U76-monture-table https://images.unsplash.com/photo-1585600739052-a1d4c6f92067
