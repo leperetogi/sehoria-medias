@@ -12,3 +12,7 @@
 - U74-arbres ok — 2400 × 1912, 955 Ko — https://images.unsplash.com/photo-1512099053734-e6767b535838
 - U75-table-ancienne ok — 1600 × 2400, 777 Ko — https://images.unsplash.com/photo-1536436967234-f5f99a9b7372
 - U76-monture-table ok — 2400 × 1795, 404 Ko — https://images.unsplash.com/photo-1585600739052-a1d4c6f92067
+- U68c-louis14 ok — 1722 × 2400, 1276 Ko — https://upload.wikimedia.org/wikipedia/commons/5/58/Portrait_of_Louis_XIV_of_France_in_Coronation_Robes_%28by_Hyacinthe_Rigaud%29_-_Louvre_Museum.jpg
+- U68d-louis14 ok — 1741 × 2400, 1364 Ko — https://upload.wikimedia.org/wikipedia/commons/b/b9/Hyacinthe_rigaud%2C_ritratto_di_luigi_xiv_di_francia%2C_1701%2C_01.JPG
+- U68e-louis14 ok — 1492 × 2400, 1216 Ko — https://upload.wikimedia.org/wikipedia/commons/0/09/Rigaud_Hyacinthe_-_Louis_XIV%2C_roi_de_France.jpg
+- U68f-louis14 ok — 922 × 1300, 437 Ko — https://upload.wikimedia.org/wikipedia/commons/a/a6/H._Rigaud_%E2%80%93_Louis_XIV.jpeg
