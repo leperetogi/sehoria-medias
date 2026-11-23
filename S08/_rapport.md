@@ -16,3 +16,5 @@
 - U68d-louis14 ok — 1741 × 2400, 1364 Ko — https://upload.wikimedia.org/wikipedia/commons/b/b9/Hyacinthe_rigaud%2C_ritratto_di_luigi_xiv_di_francia%2C_1701%2C_01.JPG
 - U68e-louis14 ok — 1492 × 2400, 1216 Ko — https://upload.wikimedia.org/wikipedia/commons/0/09/Rigaud_Hyacinthe_-_Louis_XIV%2C_roi_de_France.jpg
 - U68f-louis14 ok — 922 × 1300, 437 Ko — https://upload.wikimedia.org/wikipedia/commons/a/a6/H._Rigaud_%E2%80%93_Louis_XIV.jpeg
+- U68g-louis14-hd ok — 2883 × 4018, 2513 Ko — https://upload.wikimedia.org/wikipedia/commons/5/58/Portrait_of_Louis_XIV_of_France_in_Coronation_Robes_%28by_Hyacinthe_Rigaud%29_-_Louvre_Museum.jpg
+- U68h-louis14-hd ok — 2196 × 3028, 2105 Ko — https://upload.wikimedia.org/wikipedia/commons/b/b9/Hyacinthe_rigaud%2C_ritratto_di_luigi_xiv_di_francia%2C_1701%2C_01.JPG
