@@ -27,6 +27,7 @@ from PIL import Image
 
 RACINE = Path(__file__).resolve().parent.parent
 LARGEUR = 2400            # assez pour un découpage pleine page 1080 × 1350
+LARGEUR_HD = 6000         # nom finissant par « -hd » : pour un gros plan dans un tableau (S08, 23/11)
 MAX_OCTETS = 40 * 1024 * 1024
 MAX_PAR_DEMANDE = 30
 UA = "sehoria-medias/1.0 (telechargement de photos libres de droits; https://github.com/leperetogi/sehoria-medias)"
@@ -105,13 +106,13 @@ def telecharger(url: str) -> bytes:
     raise RuntimeError(derniere or "échec du téléchargement")
 
 
-def enregistrer(donnees: bytes, dest: Path) -> str:
+def enregistrer(donnees: bytes, dest: Path, largeur: int = LARGEUR) -> str:
     im = Image.open(io.BytesIO(donnees))
     im.load()
     if im.mode not in ("RGB", "L"):
         im = im.convert("RGB")
-    if max(im.size) > LARGEUR:   # Wikimedia renvoie souvent l'original, parfois énorme
-        r = LARGEUR / max(im.size)
+    if max(im.size) > largeur:   # Wikimedia renvoie souvent l'original, parfois énorme
+        r = largeur / max(im.size)
         im = im.resize((round(im.width * r), round(im.height * r)), Image.LANCZOS)
     im.save(dest, "JPEG", quality=93)
     return f"{im.width} × {im.height}, {dest.stat().st_size // 1024} Ko"
@@ -153,7 +154,7 @@ def traiter(demande: Path) -> None:
         if dest.exists() or echecs.get(nom) == source:
             continue
         try:
-            infos = enregistrer(telecharger(url_source(source)), dest)
+            infos = enregistrer(telecharger(url_source(source)), dest, LARGEUR_HD if nom.endswith("-hd") else LARGEUR)
             nouvelles.append(f"- {nom} ok — {infos} — {source}")
         except Exception as e:
             raison = " ".join(str(e).split())[:200] or type(e).__name__
