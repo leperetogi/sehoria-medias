@@ -54,6 +54,8 @@ def principal(seulement=None):
         lignes += [f"{pub['id']} — {pub['titre']}", "-" * 40]
         for reseau in [r for r in ("instagram", "facebook", "linkedin") if r in pub["legendes"]]:
             leg = legende_propre(pub["legendes"][reseau])
+            if reseau == "facebook" and SEMAINE >= "08":   # le Reel S07 avec lien : 1 vue (bilan du 22/11)
+                assert "http" not in leg and "sehoria.fr" not in leg.replace("@sehoria.fr", ""), (pub["id"], reseau)
             constats, _, _ = verifier(leg, "legende")
             erreurs = [c for c in constats if c[0] == "ERREUR"]
             assert not erreurs, (pub["id"], reseau, erreurs)
@@ -66,6 +68,8 @@ def principal(seulement=None):
             elif pub.get("fin") == "suivre":   # 23/10 : carrousel de conseil, on invite à suivre, sans lien d'accès
                 assert "Demander un accès" not in leg and "suivez" in leg.lower(), (pub["id"], reseau)
                 assert ("#" in leg) == (reseau == "instagram"), (pub["id"], reseau)
+            elif reseau == "facebook" and SEMAINE >= "08":   # 22/11 (charte v2.6) : aucun lien dans la légende d'un Reel Facebook
+                assert "Essayer 30" in leg and "#" not in leg and "Sans carte bancaire" in leg, (pub["id"], reseau)
             else:
                 assert ("lien en bio" in leg) if reseau == "instagram" else ("sehoria.fr" in leg), (pub["id"], reseau)
                 if reseau != "instagram":
