@@ -18,7 +18,8 @@ L'espace de travail ne joint pas Unsplash ; GitHub, si. Une fois les photos vali
 python3 src/photos.py 02 "U12-penseur=<urls.raw du connecteur Unsplash>" "U13-gravure=<lien upload.wikimedia.org>"
 ```
 Le script pousse la liste sur la branche `photos`, attend le robot GitHub (moins d'une minute en général) et copie
-les photos réussies dans `assets/photos/`. Un échec s'affiche avec sa raison. Pour Unsplash, toujours le lien
+les photos réussies dans `assets/photos/`. Un échec s'affiche avec sa raison. Les photos arrivent en 2400 px au plus ; un nom
+finissant par `-hd` les garde jusqu'à 6000 px (gros plan dans un tableau : Louis XIV de S08, 23/11). Pour Unsplash, toujours le lien
 `images.unsplash.com/photo-…` (champ `urls.raw`) : un identifiant seul échoue (401). Chercher avec `plus: none`
 (jamais de photo Unsplash+). Détail : README de la branche `photos`.
 
